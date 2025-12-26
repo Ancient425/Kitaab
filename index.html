@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kitaab</title>
+    <link rel="stylesheet" href="./index.css">
+</head>
+
+<body>
+    <div class="ball ball1"></div>
+    <div class="ball ball2"></div>
+    <section class="nav">
+        <nav>
+            <header>
+                <img src="./media/logo.svg">
+                <h2>Kitaab</h2>
+            </header>
+            <ul>
+                <li><a href="#"><img src="./media/home.svg" />Home</a></li>
+                <li><a href="#"><img src="./media/recents.svg" />Recents</a></li>
+                <li><a href="#"><img src="./media/notebook.svg" />Notebooks</a></li>
+            </ul>
+            <div class="settings">
+                <b><label for="toggleDarkMode">Darkmode </label></b>
+                <label class="switch">
+                    <input type="checkbox" id="toggleDarkMode">
+                    <span class="slider round"></span>
+                </label>
+            </div>
+        </nav>
+    </section>
+    <section class="main">
+        <div class="subjects">
+            <h3>Subjects</h3>
+            <div class="books">
+                <div class="book">
+                    <div class="cover">S</div>
+                    <div class="info">
+                        <p class="bookName">subject</p>
+                        <p class="bookChapters">chapters</p>
+                    </div>
+                </div>
+                <div class="book">
+                    <div class="cover">M</div>
+                    <div class="info">
+                        <p class="bookName">subject</p>
+                        <p class="bookChapters">chapters</p>
+                    </div>
+                </div>
+                <div class="book">
+                    <div class="cover">E</div>
+                    <div class="info">
+                        <p class="bookName">subject</p>
+                        <p class="bookChapters">chapters</p>
+                    </div>
+                </div>
+                <div class="book">
+                    <div class="cover">S</div>
+                    <div class="info">
+                        <p class="bookName">subject</p>
+                        <p class="bookChapters">chapters</p>
+                    </div>
+                </div>
+            </div>
+            <div class="credits">
+                <p>Made By Team Beyond</p> <p>v4p2</p>
+            </div>
+        </div>
+        <div class="branding">
+            <img src="./media/logo.svg">
+            <h1>Kitaab</h1>
+        </div>
+        <div class="suggestionContainer">
+            <div class="suggestionInnerContainer">
+            </div>
+        </div>
+        <div class="searchContainer">
+            <input class="inputSearch" type="text" placeholder="Search chapters ...    or use help() to get help">
+        </div>
+    </section>
+    <script src="./index.js"></script>
+</body>
+
+</html>

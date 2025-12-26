@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Chapter</title>
+  <style>
+    body,
+    html {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      display: flex;
+      background: #f4f6f7;
+      font-family: "Inter", system-ui, sans-serif;
+    }
+
+    iframe {
+      border: none;
+      height: 100vh;
+      width: 50vw;
+      z-index: 1;
+      transition: all 0.3s ease;
+
+    }
+
+    .whiteboard {
+      width: 50vw;
+      height: 100vh;
+      background: #fff;
+      position: absolute;
+      right: 0;
+      overflow: hidden;
+      /* removed transition */
+      z-index: 5;
+      transition: all 0.3s ease;
+    }
+
+    /* ===== Floating Range Widget ===== */
+    .rangeContainer {
+      position: absolute;
+      bottom: 15px;
+      left: 50%;
+      transform: translateX(-50%) scale(0.7);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 26px;
+      flex-direction: column;
+      transition: all 0.4s ease;
+      z-index: 1000;
+      opacity: 1;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-radius: 25px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.37);
+      color: #fff;
+      padding: 8px 14px;
+    }
+
+    .rangeContainer.hidden {
+      opacity: 0;
+      transform: translate(-50%, 120px) scale(0.6);
+      pointer-events: none;
+      box-shadow: none;
+    }
+
+    .rangeContainer:hover {
+      width: 500px;
+      height: 125px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transform: translateY(5px) translateX(-50%) scale(0.7);
+      padding: 10px;
+    }
+
+    .rangeContainer:hover>.divider {
+      width: 470px;
+      margin: 10px;
+      margin-top: 20px;
+    }
+
+    .rangeContainer:hover>.divider::-webkit-slider-runnable-track {
+      width: 470px;
+      height: 25px;
+      border-radius: 5px;
+    }
+
+    .rangeContainer:hover>.divider::-webkit-slider-thumb {
+      width: 7.5px;
+      height: 30px;
+      margin-top: -2.5px;
+      border-radius: 1px;
+    }
+
+    .rangeContainer:hover>.ratio-buttons {
+      width: 100%;
+      display: flex;
+      justify-content: space-evenly;
+    }
+
+    .rangeContainer:hover>.ratio-buttons button {
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-radius: 50px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.37);
+      color: #fff;
+      background: transparent;
+      padding: 20px 25px;
+      font-family: "cascadia code";
+      font-size: 18px;
+    }
+
+    /* Divider Styling */
+    .divider {
+      appearance: none;
+      -webkit-appearance: none;
+      width: 160px;
+      height: 8px;
+      background: #21808d;
+      border-radius: 6px;
+      outline: none;
+      cursor: pointer;
+      transition: all 0.4s ease;
+      margin: 0 auto;
+      display: block;
+    }
+
+    .divider::-webkit-slider-runnable-track {
+      height: 8px;
+      background: linear-gradient(90deg, #27a0b5, #21808d);
+      border-radius: 10px;
+    }
+
+    .divider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      height: 20px;
+      width: 20px;
+      border-radius: 50%;
+      background: #fff;
+      margin-top: -6px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+      transition: transform 0.2s ease, background 0.2s ease;
+    }
+
+    .divider::-webkit-slider-thumb:hover {
+      transform: scale(1.2);
+      background: #f5f5f5;
+    }
+
+    /* Ratio Buttons */
+    .ratio-buttons {
+      display: none;
+      justify-content: center;
+      gap: 12px;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(6px) scale(0.92);
+      transition: all 0.3s ease;
+      margin-left: 12px;
+    }
+
+    .rangeContainer:hover .ratio-buttons {
+      opacity: 1;
+      pointer-events: all;
+      transform: translateY(0) scale(1);
+      display: flex;
+    }
+
+    .ratio-buttons button {
+      color: #fff;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 10px;
+      font-size: 15px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.25);
+    }
+
+    .ratio-buttons button:hover {
+      background: #27a0b5;
+      transform: scale(1.1);
+    }
+
+    /* ==== Tools ==== */
+    .tools {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      display: flex;
+      flex-direction: row;
+      gap: 10px;
+      z-index: 30;
+    }
+
+    .tools button {
+      background: #21808d;
+      border: none;
+      padding: 12px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .tools button.active {
+      background: #f5a623;
+      transform: scale(1.1);
+    }
+
+    .tools button:hover {
+      background: #27a0b5;
+      transform: scale(1.1);
+    }
+
+    /* Highlighter menu */
+    .tool-with-menu {
+      position: relative;
+      display: inline-block;
+    }
+
+    .highlighter-menu {
+      position: absolute;
+      top: calc(100% + 8px);
+      left: 50%;
+      transform: translateX(-50%) translateY(-6px) scale(0.985);
+      min-width: 240px;
+      opacity: 0;
+      pointer-events: none;
+      background: rgba(0, 0, 0, 0.65);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+      padding: 10px 14px;
+      z-index: 2000;
+      transition: opacity 190ms ease, transform 230ms cubic-bezier(.2,.9,.3,1);
+    }
+
+    /* show via class so JS can control linger and animation */
+    .tool-with-menu.open .highlighter-menu,
+    .tool-with-menu.animating .highlighter-menu,
+    /* also show on CSS hover so the menu appears when hovering the button */
+    .tool-with-menu:hover .highlighter-menu {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateX(-50%) translateY(0) scale(1);
+    }
+
+
+    .highlighter-menu .controls {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .highlighter-color {
+      width: 38px;
+      height: 30px;
+      border: 0;
+      padding:0;
+      background: none;
+      border-radius:10px;
+    }
+
+    .hl-size {
+      width: 150px;
+    }
+
+    /* Brush size range mimics the main divider look */
+    .hl-size[type="range"] {
+      appearance: none;
+      -webkit-appearance: none;
+      height: 8px;
+      background: #21808d;
+      border-radius: 6px;
+    }
+
+    .hl-size[type="range"]::-webkit-slider-runnable-track {
+      height:   8px;
+      background: linear-gradient(90deg, #27a0b5, #21808d);
+      border-radius: 10px;
+    }
+
+    .hl-size[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      height: 20px;
+      width: 7.5px;
+      border-radius:1px;
+      background: #fff;
+      margin-top: -6px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Show the selected highlighter color only when active/hover/open */
+    .tool-with-menu {
+      --hl-color: #ffe34d;
+    }
+
+    .tool-with-menu.open>button,
+    .tool-with-menu:hover>button,
+    .tool-with-menu>button.active {
+      background: var(--hl-color);
+    }
+
+    .tools button img {
+      width: 24px;
+      height: 24px;
+    }
+
+    canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      user-select: none;
+    }
+
+    #highlightCanvas {
+      z-index: 1;
+      width: 100%;
+      height: 100%;
+    }
+
+    #shapeCanvas {
+      z-index: 2;
+      width: 100%;
+      height: 100%;
+    }
+
+    #previewCanvas {
+      z-index: 3;
+      pointer-events: none;
+      width: 100%;
+      height: 100%;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="rangeContainer">
+    <input type="range" class="divider" min="0" max="100" value="50" />
+    <div class="ratio-buttons">
+      <button data-ratio="25">1:3</button>
+      <button data-ratio="33">1:2</button>
+      <button data-ratio="50">1:1</button>
+      <button data-ratio="66">2:1</button>
+      <button data-ratio="75">3:1</button>
+    </div>
+  </div>
+
+  <iframe src=""></iframe>
+
+  <div class="whiteboard">
+    <div class="tools">
+      <button data-tool="circle" class="active"><img src="./media/circle-regular-full (1).svg" alt="Circle" /></button>
+      <button data-tool="square"><img src="./media/square-regular-full.svg" alt="Square" /></button>
+      <button data-tool="line"><img src="./media/grip-lines-solid-full.svg" alt="Line" /></button>
+      <span class="tool-with-menu">
+        <button data-tool="highlighter" id="hlBtn"><img src="./media/highlighter-solid-full.svg" alt="Highlighter" /></button>
+        <div class="highlighter-menu" id="hlMenu">
+          <div class="controls">
+            <input type="color" id="hlColor" class="highlighter-color" value="#ffe34d" />
+            <input type="range" id="hlSize" class="hl-size" min="4" max="60" value="18" />
+          </div>  
+        </div>
+      </span>
+      <button id="undoBtn"><img src="./media/rotate-left-solid-full.svg" alt="Undo" /></button>
+      <button id="redoBtn"><img src="./media/rotate-right-solid-full.svg" alt="Redo" /></button>
+    </div>
+    <canvas id="highlightCanvas"></canvas>
+    <canvas id="shapeCanvas" width="100%" , height="100%"></canvas>
+    <canvas id="previewCanvas"></canvas>
+  </div>
+
+  <script>
+
+    // === PDF Loader ===
+    window.addEventListener("load", () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const file = urlParams.get("file");
+      if (file) document.querySelector("iframe").src = file;
+    });
+
+    // === Divider Logic ===
+    const divider = document.querySelector(".divider");
+    const pdf = document.querySelector("iframe");
+    const whiteboard = document.querySelector(".whiteboard");
+    const canvas = document.querySelectorAll("canvas");
+    const rangeContainer = document.querySelector(".rangeContainer");
+
+    function updateSplit(value) {
+      const percent = parseFloat(value);
+      pdf.style.width = `${percent}vw`;
+      whiteboard.style.width = `${100 - percent}vw`;
+      canvas.forEach(c => c.style.width = `${100 - percent}vw`);
+      resizeCanvases();
+    }
+
+    divider.addEventListener("input", () => updateSplit(divider.value));
+
+    document.querySelectorAll(".ratio-buttons button").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const value = parseInt(btn.dataset.ratio);
+        divider.value = value;
+        updateSplit(value);
+      });
+    });
+
+    // === Inactivity Fade ===
+    let inactivityTimer;
+    function hideWidget() {
+      rangeContainer.classList.add("hidden");
+    }
+    function showWidget() {
+      rangeContainer.classList.remove("hidden");
+      clearTimeout(inactivityTimer);
+      inactivityTimer = setTimeout(hideWidget, 4000);
+    }
+    ["pointermove", "pointerdown", "keydown"].forEach(e =>
+      window.addEventListener(e, showWidget)
+    );
+    const highlightCanvas = document.getElementById("highlightCanvas");
+    const shapeCanvas = document.getElementById("shapeCanvas");
+    const previewCanvas = document.getElementById("previewCanvas");
+
+    const highlightCtx = highlightCanvas.getContext("2d");
+    const shapeCtx = shapeCanvas.getContext("2d");
+    const previewCtx = previewCanvas.getContext("2d");
+
+    let drawing = false,
+      startX = 0,
+      startY = 0,
+      currentTool = "circle";
+
+    let history = [],
+      redoStack = [];
+
+    function resizeCanvases() {
+      const w = whiteboard.clientWidth;
+      const h = whiteboard.clientHeight;
+
+      // Set actual pixel size (not just CSS)
+      [highlightCanvas, shapeCanvas, previewCanvas].forEach(c => {
+        c.width = w;
+        c.height = h;
+        c.style.width = w + "px";
+        c.style.height = h + "px";
+      });
+
+      restoreHistory();
+    }
+
+    window.addEventListener("resize", resizeCanvases);
+    resizeCanvases();
+
+    function saveState() {
+      const combined = document.createElement("canvas");
+      combined.width = shapeCanvas.width;
+      combined.height = shapeCanvas.height;
+      const ctx = combined.getContext("2d");
+      ctx.drawImage(highlightCanvas, 0, 0);
+      ctx.drawImage(shapeCanvas, 0, 0);
+      history.push(combined.toDataURL());
+      redoStack = [];
+      if (history.length > 100) history.shift();
+    }
+
+    function restoreHistory() {
+      clearAll();
+      if (!history.length) return;
+      const img = new Image();
+      img.onload = () => {
+        shapeCtx.drawImage(img, 0, 0, shapeCanvas.width, shapeCanvas.height);
+      };
+      img.src = history[history.length - 1];
+    }
+
+    function clearAll() {
+      [highlightCtx, shapeCtx, previewCtx].forEach(ctx =>
+        ctx.clearRect(0, 0, shapeCanvas.width, shapeCanvas.height)
+      );
+    }
+
+    // === Tool selection ===
+    document.querySelectorAll(".tools button[data-tool]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        currentTool = btn.dataset.tool;
+        document.querySelectorAll(".tools button[data-tool]").forEach(b =>
+          b.classList.remove("active")
+        );
+        btn.classList.add("active");
+      });
+    });
+
+    // === Undo / Redo ===
+    document.getElementById("undoBtn").addEventListener("click", () => {
+      if (history.length > 1) {
+        redoStack.push(history.pop());
+        restoreHistory();
+      }
+    });
+
+    document.getElementById("redoBtn").addEventListener("click", () => {
+      if (redoStack.length) {
+        history.push(redoStack.pop());
+        restoreHistory();
+      }
+    });
+
+    let isFreehand = false;
+
+    // Pointer-based handlers are used (pointerdown/pointermove/pointerup) for touch/pen/mouse.
+    let activePointerId = null;
+
+    // highlighter controls
+    const hlBtn = document.getElementById('hlBtn');
+    const hlMenu = document.getElementById('hlMenu');
+    const hlColor = document.getElementById('hlColor');
+    const hlSize = document.getElementById('hlSize');
+    // updateHlButton previously set an inline background on the button.
+    // We use the CSS variable (--hl-color) instead and let CSS show the
+    // color only when the wrapper is hovered/active/open. No inline style.
+    // Toggle menu on click (helpful for touch devices)
+    hlBtn.addEventListener('click', (ev) => {
+      const wrapper = hlBtn.closest('.tool-with-menu');
+      wrapper.classList.toggle('open');
+      ev.stopPropagation();
+    });
+    // close menu when clicking outside
+    document.addEventListener('click', (ev) => {
+      if (!ev.target.closest('.tool-with-menu')) document.querySelectorAll('.tool-with-menu.open').forEach(w => w.classList.remove('open'));
+    });
+
+    // Apply CSS variable for selected color so button shows color only when active/hover
+    function setHlCssVar() {
+      const wrapper = hlBtn.closest('.tool-with-menu');
+      wrapper.style.setProperty('--hl-color', hlColor.value);
+    }
+    setHlCssVar();
+    hlColor.addEventListener('input', setHlCssVar);
+
+    // delayed hide when leaving the highlighter area (linger 1s)
+    let hlLeaveTimer = null;
+    const hlWrapper = hlBtn.closest('.tool-with-menu');
+    hlWrapper.addEventListener('mouseleave', () => {
+      hlLeaveTimer = setTimeout(() => hlWrapper.classList.remove('open'), 1000);
+    });
+    hlWrapper.addEventListener('mouseenter', () => {
+      if (hlLeaveTimer) { clearTimeout(hlLeaveTimer); hlLeaveTimer = null; }
+    });
+
+
+    whiteboard.addEventListener('pointerdown', e => {
+      // ignore interactions with UI
+      if (e.target.closest('button, img, input, .ratio-buttons')) return;
+      drawing = true;
+      isFreehand = currentTool === 'highlighter';
+      const rect = whiteboard.getBoundingClientRect();
+      startX = e.clientX - rect.left;
+      startY = e.clientY - rect.top;
+      activePointerId = e.pointerId;
+      if (whiteboard.setPointerCapture) whiteboard.setPointerCapture(activePointerId);
+
+      if (isFreehand) {
+        highlightCtx.lineCap = 'round';
+        highlightCtx.lineJoin = 'round';
+        highlightCtx.strokeStyle = hlColor.value || '#ffe34d';
+        highlightCtx.lineWidth = parseInt(hlSize.value || 18);
+        highlightCtx.globalAlpha = 0.32;
+        highlightCtx.beginPath();
+        highlightCtx.moveTo(startX, startY);
+      }
+    });
+
+    whiteboard.addEventListener('pointermove', e => {
+      if (!drawing || e.pointerId !== activePointerId) return;
+      const rect = whiteboard.getBoundingClientRect();
+      const currentX = e.clientX - rect.left;
+      const currentY = e.clientY - rect.top;
+      previewCtx.clearRect(0, 0, previewCanvas.width, previewCanvas.height);
+
+      if (isFreehand) {
+        highlightCtx.lineTo(currentX, currentY);
+        highlightCtx.stroke();
+      } else {
+        drawShape(previewCtx, startX, startY, currentX, currentY, currentTool);
+      }
+    });
+
+    function finishPointerDrawing(e) {
+      if (!drawing) return;
+      // if event has pointerId ensure it matches
+      if (e && e.pointerId && e.pointerId !== activePointerId) return;
+      drawing = false;
+      if (activePointerId && whiteboard.releasePointerCapture) {
+        try { whiteboard.releasePointerCapture(activePointerId); } catch (err) { }
+      }
+      activePointerId = null;
+      previewCtx.clearRect(0, 0, previewCanvas.width, previewCanvas.height);
+      const rect = whiteboard.getBoundingClientRect();
+      const endX = e ? e.clientX - rect.left : startX;
+      const endY = e ? e.clientY - rect.top : startY;
+
+      if (!isFreehand) drawShape(shapeCtx, startX, startY, endX, endY, currentTool);
+      saveState();
+    }
+
+    whiteboard.addEventListener('pointerup', finishPointerDrawing);
+    whiteboard.addEventListener('pointercancel', finishPointerDrawing);
+    window.addEventListener('pointerup', finishPointerDrawing);
+
+    function drawShape(ctx, x1, y1, x2, y2, tool) {
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = "#000";
+      ctx.beginPath();
+
+      if (tool === "circle") {
+        const r = Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
+        ctx.arc(x1, y1, r, 0, Math.PI * 2);
+      } else if (tool === "square") {
+        ctx.rect(x1, y1, x2 - x1, y2 - y1);
+      } else if (tool === "line") {
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+      }
+      ctx.stroke();
+    }
+
+    // Ensure history has an initial blank state
+    if (!history.length) {
+      const empty = document.createElement('canvas');
+      empty.width = shapeCanvas.width;
+      empty.height = shapeCanvas.height;
+      history.push(empty.toDataURL());
+    }
+    saveState();
+
+    // Now that canvases exist and initial state is saved, set initial split
+    updateSplit(divider.value);
+
+    window.addEventListener("beforeunload" , ()=>{
+      let result = confirm("Are you sure you want to leave? Your whiteboard diagrams will be lost.");
+      if (!result){
+        event.preventDefault();
+        event.returnValue = '';
+      }
+    })
+    
+  </script>
+</body>
+
+</html>

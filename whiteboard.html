@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Full Canvas Whiteboard</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      width: 100%;
+      overflow: hidden;
+      background: #f4f6f7;
+      font-family: "Inter", system-ui, sans-serif;
+    }
+
+    .whiteboard {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      background: #fff;
+      overflow: hidden;
+    }
+
+    /* === Tools === */
+    .tools {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      display: flex;
+      gap: 10px;
+      z-index: 30;
+    }
+
+    .tools button {
+      background: #21808d;
+      border: none;
+      padding: 12px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .tools button.active {
+      background: #f5a623;
+      transform: scale(1.1);
+    }
+
+    .tools button:hover {
+      background: #27a0b5;
+      transform: scale(1.1);
+    }
+
+    .tools button img {
+      width: 24px;
+      height: 24px;
+    }
+
+    /* Highlighter menu */
+    .tool-with-menu {
+      position: relative;
+      display: inline-block;
+    }
+
+    .highlighter-menu {
+      position: absolute;
+      top: calc(100% + 8px);
+      left: 50%;
+      transform: translateX(-50%) translateY(-6px) scale(0.985);
+      min-width: 240px;
+      opacity: 0;
+      pointer-events: none;
+      background: rgba(0, 0, 0, 0.65);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+      padding: 10px 14px;
+      z-index: 2000;
+      transition: opacity 190ms ease, transform 230ms cubic-bezier(.2,.9,.3,1);
+    }
+
+    .tool-with-menu.open .highlighter-menu,
+    .tool-with-menu:hover .highlighter-menu {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateX(-50%) translateY(0) scale(1);
+    }
+
+    .highlighter-menu .controls {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .highlighter-color {
+      width: 38px;
+      height: 30px;
+      border: 0;
+      background: none;
+      border-radius: 10px;
+      padding: 0;
+    }
+
+    .hl-size {
+      width: 150px;
+    }
+
+    .hl-size[type="range"] {
+      appearance: none;
+      -webkit-appearance: none;
+      height: 8px;
+      background: #21808d;
+      border-radius: 6px;
+    }
+
+    .hl-size[type="range"]::-webkit-slider-runnable-track {
+      height: 8px;
+      background: linear-gradient(90deg, #27a0b5, #21808d);
+      border-radius: 10px;
+    }
+
+    .hl-size[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      height: 20px;
+      width: 7.5px;
+      border-radius: 1px;
+      background: #fff;
+      margin-top: -6px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+    }
+
+    canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      user-select: none;
+    }
+
+    #highlightCanvas { z-index: 1; }
+    #shapeCanvas { z-index: 2; }
+    #previewCanvas { z-index: 3; pointer-events: none; }
+  </style>
+</head>
+<body>
+
+  <div class="whiteboard">
+    <div class="tools">
+      <button data-tool="circle" class="active"><img src="./media/circle-regular-full (1).svg" alt="Circle" /></button>
+      <button data-tool="square"><img src="./media/square-regular-full.svg" alt="Square" /></button>
+      <button data-tool="line"><img src="./media/grip-lines-solid-full.svg" alt="Line" /></button>
+
+      <span class="tool-with-menu">
+        <button data-tool="highlighter" id="hlBtn"><img src="./media/highlighter-solid-full.svg" alt="Highlighter" /></button>
+        <div class="highlighter-menu" id="hlMenu">
+          <div class="controls">
+            <input type="color" id="hlColor" class="highlighter-color" value="#ffe34d" />
+            <input type="range" id="hlSize" class="hl-size" min="4" max="60" value="18" />
+          </div>
+        </div>
+      </span>
+
+      <button id="undoBtn"><img src="./media/rotate-left-solid-full.svg" alt="Undo" /></button>
+      <button id="redoBtn"><img src="./media/rotate-right-solid-full.svg" alt="Redo" /></button>
+    </div>
+
+    <canvas id="highlightCanvas"></canvas>
+    <canvas id="shapeCanvas"></canvas>
+    <canvas id="previewCanvas"></canvas>
+  </div>
+
+  <script>
+    const whiteboard = document.querySelector('.whiteboard');
+    const highlightCanvas = document.getElementById('highlightCanvas');
+    const shapeCanvas = document.getElementById('shapeCanvas');
+    const previewCanvas = document.getElementById('previewCanvas');
+
+    const highlightCtx = highlightCanvas.getContext('2d');
+    const shapeCtx = shapeCanvas.getContext('2d');
+    const previewCtx = previewCanvas.getContext('2d');
+
+    let currentTool = 'circle';
+    let drawing = false;
+    let startX = 0, startY = 0;
+    let activePointerId = null;
+    let isFreehand = false;
+    let history = [], redoStack = [];
+
+    function resizeCanvases() {
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      [highlightCanvas, shapeCanvas, previewCanvas].forEach(c => {
+        c.width = w;
+        c.height = h;
+      });
+      restoreHistory();
+    }
+
+    window.addEventListener('resize', resizeCanvases);
+    resizeCanvases();
+
+    function saveState() {
+      const combined = document.createElement('canvas');
+      combined.width = shapeCanvas.width;
+      combined.height = shapeCanvas.height;
+      const ctx = combined.getContext('2d');
+      ctx.drawImage(highlightCanvas, 0, 0);
+      ctx.drawImage(shapeCanvas, 0, 0);
+      history.push(combined.toDataURL());
+      redoStack = [];
+      if (history.length > 100) history.shift();
+    }
+
+    function restoreHistory() {
+      [highlightCtx, shapeCtx, previewCtx].forEach(ctx => ctx.clearRect(0, 0, shapeCanvas.width, shapeCanvas.height));
+      if (!history.length) return;
+      const img = new Image();
+      img.onload = () => shapeCtx.drawImage(img, 0, 0, shapeCanvas.width, shapeCanvas.height);
+      img.src = history[history.length - 1];
+    }
+
+    // Tool buttons
+    document.querySelectorAll('.tools button[data-tool]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        currentTool = btn.dataset.tool;
+        document.querySelectorAll('.tools button[data-tool]').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+      });
+    });
+
+    // Undo / Redo
+    document.getElementById('undoBtn').addEventListener('click', () => {
+      if (history.length > 1) {
+        redoStack.push(history.pop());
+        restoreHistory();
+      }
+    });
+
+    document.getElementById('redoBtn').addEventListener('click', () => {
+      if (redoStack.length) {
+        history.push(redoStack.pop());
+        restoreHistory();
+      }
+    });
+
+    // Highlighter
+    const hlBtn = document.getElementById('hlBtn');
+    const hlColor = document.getElementById('hlColor');
+    const hlSize = document.getElementById('hlSize');
+    const hlWrapper = hlBtn.closest('.tool-with-menu');
+    hlBtn.addEventListener('click', e => {
+      hlWrapper.classList.toggle('open');
+      e.stopPropagation();
+    });
+    document.addEventListener('click', e => {
+      if (!e.target.closest('.tool-with-menu')) hlWrapper.classList.remove('open');
+    });
+    function setHlCssVar() {
+      hlWrapper.style.setProperty('--hl-color', hlColor.value);
+    }
+    setHlCssVar();
+    hlColor.addEventListener('input', setHlCssVar);
+
+    // Drawing
+    whiteboard.addEventListener('pointerdown', e => {
+      if (e.target.closest('button, img, input')) return;
+      drawing = true;
+      isFreehand = currentTool === 'highlighter';
+      const rect = whiteboard.getBoundingClientRect();
+      startX = e.clientX - rect.left;
+      startY = e.clientY - rect.top;
+      activePointerId = e.pointerId;
+      if (whiteboard.setPointerCapture) whiteboard.setPointerCapture(activePointerId);
+
+      if (isFreehand) {
+        highlightCtx.lineCap = 'round';
+        highlightCtx.lineJoin = 'round';
+        highlightCtx.strokeStyle = hlColor.value || '#ffe34d';
+        highlightCtx.lineWidth = parseInt(hlSize.value || 18);
+        highlightCtx.globalAlpha = 0.32;
+        highlightCtx.beginPath();
+        highlightCtx.moveTo(startX, startY);
+      }
+    });
+
+    whiteboard.addEventListener('pointermove', e => {
+      if (!drawing || e.pointerId !== activePointerId) return;
+      const rect = whiteboard.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      previewCtx.clearRect(0, 0, previewCanvas.width, previewCanvas.height);
+
+      if (isFreehand) {
+        highlightCtx.lineTo(x, y);
+        highlightCtx.stroke();
+      } else {
+        drawShape(previewCtx, startX, startY, x, y, currentTool);
+      }
+    });
+
+    function finishPointer(e) {
+      if (!drawing) return;
+      if (e && e.pointerId && e.pointerId !== activePointerId) return;
+      drawing = false;
+      previewCtx.clearRect(0, 0, previewCanvas.width, previewCanvas.height);
+      const rect = whiteboard.getBoundingClientRect();
+      const endX = e ? e.clientX - rect.left : startX;
+      const endY = e ? e.clientY - rect.top : startY;
+
+      if (!isFreehand) drawShape(shapeCtx, startX, startY, endX, endY, currentTool);
+      saveState();
+    }
+
+    whiteboard.addEventListener('pointerup', finishPointer);
+    whiteboard.addEventListener('pointercancel', finishPointer);
+    window.addEventListener('pointerup', finishPointer);
+
+    function drawShape(ctx, x1, y1, x2, y2, tool) {
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = "#000";
+      ctx.beginPath();
+      if (tool === "circle") {
+        const r = Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
+        ctx.arc(x1, y1, r, 0, Math.PI * 2);
+      } else if (tool === "square") {
+        ctx.rect(x1, y1, x2 - x1, y2 - y1);
+      } else if (tool === "line") {
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+      }
+      ctx.stroke();
+    }
+
+    // initial blank state
+    const empty = document.createElement('canvas');
+    empty.width = shapeCanvas.width;
+    empty.height = shapeCanvas.height;
+    history.push(empty.toDataURL());
+    saveState();
+  </script>
+</body>
+</html>

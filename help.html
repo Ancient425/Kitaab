@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kitaab | Help</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+        :root {
+            --accent: rgb(54, 127, 223);
+            --accent-hover: #3d91ff;
+            --bg: #e7e5e5ff;
+            --text: #000;
+            --muted: #232323;
+            --translucentbg: rgba(255, 255, 255, 0.590);
+            --itemsbg: rgb(232, 235, 244);
+            --transition: 0.25s ease;
+            --border: #d0d0d0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: "Poppins", sans-serif;
+            line-height: 1.6;
+            transition: background var(--transition), color var(--transition);
+        }
+
+        /* Header */
+        header {
+            background: var(--itemsbg);
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            transition: background var(--transition);
+        }
+
+        .header-content {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .branding {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+
+        .branding img {
+            width: 40px;
+            height: 40px;
+        }
+
+        .branding h1 {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .header-controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .back-btn {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-family: "Poppins", sans-serif;
+            font-weight: 600;
+            transition: background var(--transition);
+        }
+
+        .back-btn:hover {
+            background: var(--accent-hover);
+        }
+
+        /* Dark Mode Toggle */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 26px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: var(--transition);
+            border-radius: 26px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: var(--transition);
+            border-radius: 50%;
+        }
+
+        input:checked+.slider {
+            background-color: var(--accent);
+        }
+
+        input:checked+.slider:before {
+            transform: translateX(24px);
+        }
+
+        /* Main Content */
+        main {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .intro-section {
+            padding: 40px;
+            border-radius: 20px;
+            margin-bottom: 40px;
+            transition: background var(--transition);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .intro-section h2 {
+            font-size: 60px;
+            margin-bottom: 15px;
+            color: var(--accent);
+        }
+
+        .intro-section p {
+            font-size: 16px;
+            color: var(--muted);
+            line-height: 1.8;
+        }
+
+        /* Articles */
+        .articles-grid {
+            display: grid;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .article {
+            background: var(--bg);
+            padding: 30px;
+            border-radius: 15px;
+            transition: all var(--transition);
+        }
+
+        .article:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .article-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .article-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--accent);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+        }
+
+        .article h3 {
+            font-size: 20px;
+            margin: 0;
+            color: var(--text);
+        }
+
+        .article p {
+            color: var(--muted);
+            font-size: 15px;
+            line-height: 1.7;
+            margin: 15px 0 0 0;
+        }
+
+        .article ul,
+        .article ol {
+            margin: 15px 0 0 20px;
+            color: var(--muted);
+        }
+
+        .article li {
+            margin: 8px 0;
+            line-height: 1.6;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--itemsbg);
+            padding: 30px;
+            text-align: center;
+            color: var(--muted);
+            margin-top: 40px;
+            transition: background var(--transition);
+        }
+
+        /* Dark Mode */
+        body.dark-mode {
+            --muted: #a8a8a8;
+            --itemsbg: #2d2d2d;
+            --translucentbg: rgba(26, 26, 26, 0.590);
+            --bg: #000;
+            --text: #ffffff;
+            --border: #444;
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            main {
+                padding: 20px 15px;
+            }
+
+            .intro-section,
+            .faq-section {
+                padding: 25px;
+            }
+
+            .intro-section h2 {
+                font-size: 24px;
+            }
+
+            .faq-section h2 {
+                font-size: 22px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="header-content">
+            <div class="branding" onclick="window.history.back()">
+                <img src="./media/logo.svg" alt="Kitaab">
+                <h1>Kitaab</h1>
+            </div>
+            <div class="header-controls">
+                <label style="display: flex; align-items: center; gap: 8px; font-weight: 600;">
+                    Darkmode
+                    <label class="switch">
+                        <input type="checkbox" id="toggleDarkMode">
+                        <span class="slider"></span>
+                    </label>
+                </label>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="intro-section">
+            <h2 style="margin-right:80px;">Kitaab</h2>
+            <h2>|</h2>
+            <h2 style="color:var(--text); margin-left:80px;">Help</h2>
+        </div>
+
+        <div class="articles-grid">
+            <div class="article">
+                <div class="article-header">
+                    <h3>Searching for Chapters</h3>
+                </div>
+                <p>Use the powerful search feature to quickly find any chapter or study material. Simply type in the
+                    chapter name, subject, or keywords to get instant results.</p>
+                <ul>
+                    <li>Type chapter names (e.g., "Motion", "French Revolution")</li>
+                    <li>Search by subject (Mathematics, Science, English, etc.)</li>
+                    <li>Use multiple keywords for precise results</li>
+                </ul>
+            </div>
+
+            <div class="article">
+                <div class="article-header">
+                    <h3>Subjects & Chapters</h3>
+                </div>
+                <p>Kitaab contains comprehensive study materials across multiple subjects:</p>
+                <ul>
+                    <li><strong>Mathematics:</strong> 13 chapters covering number systems, geometry, algebra, and more
+                    </li>
+                    <li><strong>Science:</strong> Physics, Chemistry, and Biology chapters</li>
+                    <li><strong>Social Science:</strong> History, Geography, Civics, and Economics</li>
+                    <li><strong>English:</strong> Literature including Beehive and Moments</li>
+                </ul>
+            </div>
+
+            <div class="article">
+                <div class="article-header">
+                    <h3>Dark Mode</h3>
+                </div>
+                <p>Enjoy a comfortable reading experience with dark mode. Toggle it on/off using the switch in the
+                    header. Your preference is automatically saved for your next visit.</p>
+            </div>
+
+            <div class="article">
+                <div class="article-header">
+                    <h3>Recent Chapters</h3>
+                </div>
+                <p>Your recently accessed chapters are stored and easily accessible. This helps you quickly get back to
+                    the materials you're currently studying.</p>
+            </div>
+
+            <div class="article">
+                <div class="article-header">
+                    <h3>Planned Features</h3>
+                </div>
+                <ul>
+                    <li>i have already included all the planned features in the help of v4p1 into v4p2 :)</li>
+                </ul>
+            </div>
+    </main>
+
+    <footer>
+        <p>Kitaab ~ v4p2</p>
+    </footer>
+
+    <script>
+        const toggleDarkMode = document.getElementById('toggleDarkMode');
+        const body = document.body;
+
+        // Check for saved dark mode preference
+        const isDarkMode = localStorage.getItem('darkMode') === 'true';
+        if (isDarkMode) {
+            toggleDarkMode.checked = true;
+            body.classList.add('dark-mode');
+        }
+
+        toggleDarkMode.addEventListener('change', () => {
+            if (toggleDarkMode.checked) {
+                body.classList.add('dark-mode');
+                localStorage.setItem('darkMode', 'true');
+            } else {
+                body.classList.remove('dark-mode');
+                localStorage.setItem('darkMode', 'false');
+            }
+        });
+
+        // FAQ Toggle functionality
+        document.querySelectorAll('.faq-question').forEach(question => {
+            question.addEventListener('click', () => {
+                const faqItem = question.parentElement;
+                faqItem.classList.toggle('active');
+            });
+        });
+    </script>
+</body>
+
+</html>
