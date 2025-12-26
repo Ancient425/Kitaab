@@ -437,7 +437,6 @@ input:checked+.slider:before {
     border: none;
 }
 
-<<<<<<< HEAD
 .buttons {
     padding: 10px;
     width: 60%;
@@ -558,37 +557,4 @@ input:checked+.slider:before {
 .chapter:hover {
     background: rgba(255, 255, 255, 0.15);
     transform: translateY(-2px);
-=======
-.buttons{
-    padding:10px;
-    width:60%;
-    height:80px;
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    margin:10px;
-}
-
-.buttons a{
-    text-decoration: none;
-    width:40%;
-    height:100%;
-}
-
-.buttons a button{
-    padding:10px;
-    background:var(--translucentbg);
-    border:1px solid var(--accent);
-    color: var(--text);
-    border-radius: 10px;
-    height:90%;
-    width:100%;
-    font-family: "cascadia code";
-    cursor:pointer;
-}
-
-.buttons a button:hover{
-    background:var(--accent);
-    color:var(--bg);
->>>>>>> 2f072aa3d061d515fb2f4133df86dad69ec4e25c
 }

@@ -238,7 +238,7 @@ search.addEventListener("input", () => {
     eval(query)
 })
 
-//? book
+//? book loader
 
 const booksContainer = document.querySelector(".books");
 const chapterList = document.querySelector(".chapterLists");
