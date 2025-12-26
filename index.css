@@ -341,7 +341,7 @@ input:checked+.slider:before {
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 5;
+    z-index: 4;
 }
 
 .searchContainer input {
@@ -366,7 +366,7 @@ input:checked+.slider:before {
     bottom: -360px;
     left: 50%;
     transform: translate(-50%);
-    width: 60 vw;
+    min-width: 50vw;
     max-height: 50vh;
     display: flex;
     justify-content: center;
@@ -393,7 +393,7 @@ input:checked+.slider:before {
     flex-direction: column;
     overflow-y: scroll;
     box-shadow: 0px -20px 100px 20px rgba(255, 255, 255, 0.1);
-    transition:var(--transition);
+    transition: var(--transition);
 }
 
 .suggestion {
@@ -417,6 +417,7 @@ input:checked+.slider:before {
         transform: translateY(10px);
         opacity: 0;
     }
+
     to {
         transform: translateY(0);
         opacity: 1;
@@ -434,4 +435,126 @@ input:checked+.slider:before {
 
 .suggestion:last-child {
     border: none;
+}
+
+.buttons {
+    padding: 10px;
+    width: 60%;
+    height: 80px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    margin: 10px;
+}
+
+.buttons a {
+    text-decoration: none;
+    width: 40%;
+    height: 100%;
+}
+
+.buttons a button {
+    padding: 10px;
+    background: var(--translucentbg);
+    border: 1px solid var(--accent);
+    color: var(--text);
+    border-radius: 10px;
+    height: 90%;
+    width: 100%;
+    font-family: "cascadia code";
+    cursor: pointer;
+}
+
+.buttons a button:hover {
+    background: var(--accent);
+    color: var(--bg);
+}
+
+.chapterLists {
+    position: absolute;
+    top: 150%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 50vw;
+    height: 90vh;
+    backdrop-filter: blur(100px) saturate(100%);
+    border: 2px solid var(--accent);
+    z-index: 5;
+    border-radius: 10px;
+    box-shadow: 0px 0px 20px 2px var(--accent-blur);
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    flex-direction: column;
+}
+
+.chapterListsContainer {
+    width: 100%;
+    max-height: 85vh;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    flex-direction: column;
+    overflow-y: scroll;
+}
+
+.chapterLists > .headder {
+    width: 100%;
+    position: sticky;
+    top: 0;
+    background: var(--translucentbg);
+    backdrop-filter: blur(100px);
+    padding: 10px;
+    color: var(--muted);
+    font-family: "Poppins", sans-serif;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+    border-radius: 10px;
+    border-top-right-radius: 0px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.chapterLists .closeList {
+    padding: 10px;
+    background: var(--translucentbg);
+    border: 1px solid var(--accent);
+    color: var(--text);
+    border-radius: 10px;
+    height: 90%;
+    width: 60px;
+    font-family: "cascadia code";
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.closeList:hover {
+    background: var(--accent);
+    color: var(--bg);
+}
+
+.chapterListsContainer .chapter {
+    width: 95%;
+    min-height: 48px;
+    padding: 12px 16px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: white;
+    font-family: "Poppins", sans-serif;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    margin: 5px 0px;
+    cursor: pointer;
+    animation: slideUp 1s ease-out forwards;
+}
+
+.chapter:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateY(-2px);
 }

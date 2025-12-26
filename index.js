@@ -1,5 +1,6 @@
 const books = {
     Mathematics: {
+        name: "Mathematics",
         details: {
             chapters: 13
         },
@@ -21,6 +22,7 @@ const books = {
     },
 
     Science: {
+        name: "Science",
         details: {
             chapters: 12
         },
@@ -41,6 +43,7 @@ const books = {
     },
 
     SocialScience: {
+        name: "Social Science",
         details: {
             chapters: 20
         },
@@ -76,6 +79,7 @@ const books = {
     },
 
     English: {
+        name: "English",
         details: {
             chapters: 21
         },
@@ -199,7 +203,7 @@ const all_chapters = () => {
 }
 
 const help = () => {
-    window.open("help.html" , "_blank")
+    window.open("help.html", "_blank")
 }
 
 search.addEventListener("input", () => {
@@ -234,6 +238,46 @@ search.addEventListener("input", () => {
     eval(query)
 })
 
-// subject
+//? book
 
-Object.values(books)
+const booksContainer = document.querySelector(".books");
+const chapterList = document.querySelector(".chapterLists");
+const chapterListContainer= document.querySelector(".chapterListsContainer");
+
+Object.values(books).forEach((ch) => {
+    let div = document.createElement("div");
+    div.classList.add("book");
+    div.setAttribute("subject", ch.name)
+    div.innerHTML = `
+            <div class="cover">${ch.name[0]}</div>
+                <div class="info">
+                    <p class="bookName">${ch.name}</p>
+                    <p class="bookChapters">${ch.chapter.length} chapters</p>
+                </div>
+            </div>
+    `;
+
+    booksContainer.appendChild(div)
+
+    div.addEventListener("click", () => {
+        document.querySelector(".headder > h3").innerHTML = `${ch.name}`
+        chapterListContainer.innerHTML = "";
+        ch.chapter.forEach((c) => {
+            let chap = document.createElement("div");
+            chap.classList.add("chapter")
+            chap.innerHTML = `
+                <p>${c.name}</p>
+            `
+            chapterListContainer.appendChild(chap);
+            chap.addEventListener("click" , () => {
+                console.log(c , c.file)
+                openChapter(c)
+            })
+        })
+        chapterList.style.top = "50%"
+    })
+})
+
+document.querySelector(".closeList").addEventListener("click", () => {
+    chapterList.style.top = "150%";
+})
