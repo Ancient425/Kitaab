@@ -435,3 +435,36 @@ input:checked+.slider:before {
 .suggestion:last-child {
     border: none;
 }
+
+.buttons{
+    padding:10px;
+    width:60%;
+    height:80px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    margin:10px;
+}
+
+.buttons a{
+    text-decoration: none;
+    width:40%;
+    height:100%;
+}
+
+.buttons a button{
+    padding:10px;
+    background:var(--translucentbg);
+    border:1px solid var(--accent);
+    color: var(--text);
+    border-radius: 10px;
+    height:90%;
+    width:100%;
+    font-family: "cascadia code";
+    cursor:pointer;
+}
+
+.buttons a button:hover{
+    background:var(--accent);
+    color:var(--bg);
+}
