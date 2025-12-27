@@ -1,0 +1,71 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+:root {
+    --sidebarElementsWidth: 92.5%;
+    --sidebarElementsBorderRadius: 20px;
+    --accent: rgb(54, 127, 223);
+    --accent-blur: rgba(54, 127, 223, 0.500);
+    --accent-hover: #3d91ff;
+    --bg: #e7e5e5ff;
+    --text: #000;
+    --muted: #232323;
+    /* for darkmode a8a8a8 */
+    --translucentbg: rgba(255, 255, 255, 0.590);
+    --itemsbg: rgb(232, 235, 244);
+    --transition: 0.25s ease;
+}
+
+::-webkit-scrollbar,
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-thumb,
+::-webkit-scrollbar-thumb {
+    background-color: var(--accent);
+    border-radius: 3px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--translucentbg);
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    transition: var(--transition);
+}
+
+body {
+    width: 100vw;
+    height: 100vh;
+    display: grid;
+    grid-template-columns: 2.5fr 8.5fr;
+    overflow: hidden;
+    background: var(--bg);
+}
+
+.ball {
+    width: 600px;
+    height: 600px;
+    border-radius: 50%;
+    background: var(--accent);
+    filter: blur(300px);
+    position: fixed;
+    z-index: -1;
+}
+
+.ball1 {
+    left: -20%;
+    bottom: -60%;
+}
+
+.ball2 {
+    right: -20%;
+    top: -60%;
+}
+
+
