@@ -362,7 +362,7 @@ const noTime = () => {
     time.style.top = "1000%"
 }
 
-const TIME_LIMIT = 5; //seconds
+const TIME_LIMIT = 10; //seconds
 let count = 0;
 let triggered = false;
 
