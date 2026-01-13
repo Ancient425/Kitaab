@@ -30,7 +30,7 @@ const books = {
             { name: "Chemistry Ch1 : Matter in Our Surroundings", file: "./files/science/matter.pdf" },
             { name: "Chemistry Ch2 : Is Matter Around Us Pure?", file: "./files/science/pure-matter.pdf" },
             { name: "Chemistry Ch3 : Atoms and Molecules", file: "./files/science/atoms.pdf" },
-            { name: "Chemistry Ch4 : Structure of the Atom", file: "./files/science/structure-atom.pdf" },
+            { name: "Chemistry Ch4 : Structure of the Atom", file: "./files/science/structure-atoms.pdf" },
             { name: "Biology Ch1 : The Fundamental Unit of Life", file: "./files/science/cell.pdf" },
             { name: "Biology Ch2 : Tissues", file: "./files/science/tissues.pdf" },
             { name: "Physics Ch1 : Motion", file: "./files/science/motion.pdf" },
@@ -223,16 +223,58 @@ search.addEventListener("input", () => {
         if (filtered.length == 0) {
             suggestionInnerContainer.innerText = `No matches found among ${allChapters.length} chapter titles :(`;
         } else {
-            suggestionInnerContainer.innerHTML = "";
-            filtered.forEach((c) => {
+            if (filtered.length == 1) {
+                suggestionInnerContainer.innerHTML = "";
+
+                // preview
+
+                const pdfPreview = document.createElement("div");
+                pdfPreview.classList.add("pdfPreview");
+                    const iframe = document.createElement("iframe")
+                    iframe.setAttribute("src", filtered[0].file);
+
+                    const overlay = document.createElement("div");
+                    overlay.addEventListener("click", () => {
+                        openChapter(filtered[0])
+                    })
+                    overlay.classList.add("overlay")                    
+
+                pdfPreview.appendChild(iframe)
+                pdfPreview.appendChild(overlay)
+
+                suggestionInnerContainer.appendChild(pdfPreview);
+
+                // suggestion
+
                 const div = document.createElement("div");
                 div.classList.add("suggestion");
-                div.textContent = c.name;
+                div.textContent = filtered[0].name;
                 suggestionInnerContainer.appendChild(div);
                 div.addEventListener("click", () => {
-                    openChapter(c)
+                    openChapter(filtered[0])
                 });
-            });
+
+                // keyboard sense
+
+                document.addEventListener("keypress" , (e)=>{
+                    if(e.key == "Enter"){
+                        openChapter(filtered[0])
+                    }
+                })
+
+            } else {
+                suggestionInnerContainer.innerHTML = "";
+                filtered.forEach((c) => {
+                    const div = document.createElement("div");
+                    div.classList.add("suggestion");
+                    div.textContent = c.name;
+                    suggestionInnerContainer.appendChild(div);
+                    div.addEventListener("click", () => {
+                        openChapter(c)
+                    });
+                });
+            }
+
         }
     }
     eval(query)
@@ -242,7 +284,7 @@ search.addEventListener("input", () => {
 
 const booksContainer = document.querySelector(".books");
 const chapterList = document.querySelector(".chapterLists");
-const chapterListContainer= document.querySelector(".chapterListsContainer");
+const chapterListContainer = document.querySelector(".chapterListsContainer");
 
 Object.values(books).forEach((ch) => {
     let div = document.createElement("div");
@@ -269,8 +311,8 @@ Object.values(books).forEach((ch) => {
                 <p>${c.name}</p>
             `
             chapterListContainer.appendChild(chap);
-            chap.addEventListener("click" , () => {
-                console.log(c , c.file)
+            chap.addEventListener("click", () => {
+                console.log(c, c.file)
                 openChapter(c)
             })
         })

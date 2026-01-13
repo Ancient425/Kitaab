@@ -558,3 +558,37 @@ input:checked+.slider:before {
     background: rgba(255, 255, 255, 0.15);
     transform: translateY(-2px);
 }
+
+.pdfPreview{
+    width: 90%;
+    height:40vh;
+    padding:10px;
+    margin:10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius:10px;
+    cursor:pointer;
+    position: relative;
+}
+
+.pdfPreview:hover{
+    background:var(--accent-hover);
+}
+
+.pdfPreview iframe{
+    width:100%;
+    height:100%;
+    border-radius:10px;
+    border:none;
+}
+
+.overlay{
+    width: 100%;
+    height:100%;
+    position: absolute;
+    top:0;
+    left:0;
+    background-color:transparent;
+    z-index:1;
+}
