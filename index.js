@@ -230,14 +230,14 @@ search.addEventListener("input", () => {
 
                 const pdfPreview = document.createElement("div");
                 pdfPreview.classList.add("pdfPreview");
-                    const iframe = document.createElement("iframe")
-                    iframe.setAttribute("src", filtered[0].file);
+                const iframe = document.createElement("iframe")
+                iframe.setAttribute("src", filtered[0].file);
 
-                    const overlay = document.createElement("div");
-                    overlay.addEventListener("click", () => {
-                        openChapter(filtered[0])
-                    })
-                    overlay.classList.add("overlay")                    
+                const overlay = document.createElement("div");
+                overlay.addEventListener("click", () => {
+                    openChapter(filtered[0])
+                })
+                overlay.classList.add("overlay")
 
                 pdfPreview.appendChild(iframe)
                 pdfPreview.appendChild(overlay)
@@ -256,8 +256,8 @@ search.addEventListener("input", () => {
 
                 // keyboard sense
 
-                document.addEventListener("keypress" , (e)=>{
-                    if(e.key == "Enter"){
+                document.addEventListener("keypress", (e) => {
+                    if (e.key == "Enter") {
                         openChapter(filtered[0])
                     }
                 })
@@ -322,4 +322,69 @@ Object.values(books).forEach((ch) => {
 
 document.querySelector(".closeList").addEventListener("click", () => {
     chapterList.style.top = "150%";
+})
+
+//? time
+
+const digits = document.querySelectorAll(".digits");
+const time = document.querySelector(".time");
+
+function updateClock() {
+    const now = new Date();
+
+    const h = String(now.getHours()).padStart(2, "0");
+    const m = String(now.getMinutes()).padStart(2, "0");
+    const s = String(now.getSeconds()).padStart(2, "0");
+
+    const timeStr = h + m + s;
+
+    digits.forEach((digitEl, index) => {
+        const num = Number(timeStr[index]);
+        digitEl.style.transform = `translateY(${-num * 7.5}rem)`;
+    });
+
+    const dateEl = document.querySelector(".DatenDay");
+
+    const options = { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' };
+    const formatted = now.toLocaleDateString('en-US', options);
+
+    dateEl.innerHTML = formatted;
+}
+
+updateClock();
+setInterval(updateClock, 1000);
+
+const bringTime = () => {
+    time.style.top = "0px"
+}
+
+const noTime = () => {
+    time.style.top = "1000%"
+}
+
+const TIME_LIMIT = 5; //seconds
+let count = 0;
+let triggered = false;
+
+setInterval(() => {
+    if (count < TIME_LIMIT) {
+        count++;
+        noTime()
+        console.log(count)
+    } else if (!triggered) {
+        bringTime()
+        triggered = true;
+    }
+}, 1000)
+
+document.addEventListener("mousemove", () => {
+    count = 0;
+    triggered = false;
+    noTime()
+})
+
+document.addEventListener("keypress", () => {
+    count = 0;
+    triggered = false;
+    noTime()
 })
