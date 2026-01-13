@@ -600,7 +600,7 @@ input:checked+.slider:before {
     top: 1000%;
     left: 0;
     z-index: 10;
-    color: white;
+    color: var(--text);
     display: flex;
     justify-content: center;
     align-items: center;
