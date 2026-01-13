@@ -133,6 +133,11 @@ main{
     flex-direction: column;
 }
 
+.response{
+    color: var(--text);
+    
+}
+
 .searchContainer{
     width:55vw;
     height:100px;
