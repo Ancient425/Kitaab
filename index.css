@@ -12,7 +12,7 @@
     /* for darkmode a8a8a8 */
     --translucentbg: rgba(255, 255, 255, 0.590);
     --itemsbg: rgb(232, 235, 244);
-    --transition: 0.25s ease;
+    --transition: 0.15s ease-out;
 }
 
 ::-webkit-scrollbar,
@@ -229,7 +229,7 @@ input:checked+.slider:before {
 .subjects {
     background: var(--translucentbg);
     width: 60%;
-    height: 50vh;
+    height: 45vh;
     border-radius: 20px;
     font-family: "montserrat";
     padding: 15px;
@@ -336,7 +336,7 @@ input:checked+.slider:before {
     bottom: 10px;
     left: 50%;
     transform: translate(-50%);
-    width: 50vw;
+    width: 60vw;
     height: 60px;
     display: flex;
     justify-content: center;
@@ -366,7 +366,7 @@ input:checked+.slider:before {
     bottom: -360px;
     left: 50%;
     transform: translate(-50%);
-    min-width: 50vw;
+    min-width: 60vw;
     max-height: 50vh;
     display: flex;
     justify-content: center;

@@ -2,43 +2,46 @@ const books = {
     Mathematics: {
         name: "Mathematics",
         details: {
-            chapters: 13
+            chapters: 14
         },
         chapter: [
-            { name: "Maths Ch1 : Number Systems", file: "./files/maths/number-systems.pdf" },
-            { name: "Maths Ch2 : Polynomials", file: "./files/maths/polynomials.pdf" },
-            { name: "Maths Ch3 : Coordinate Geometry", file: "./files/maths/coordinate-geometry.pdf" },
-            { name: "Maths Ch4 : Linear Equations in Two Variables", file: "./files/maths/linear-equations.pdf" },
-            { name: "Maths Ch5 : Introduction to Euclid’s Geometry", file: "./files/maths/euclids-geometry.pdf" },
-            { name: "Maths Ch6 : Lines and Angles", file: "./files/maths/lines-and-angles.pdf" },
-            { name: "Maths Ch7 : Triangles", file: "./files/maths/triangles.pdf" },
-            { name: "Maths Ch8 : Quadrilaterals", file: "./files/maths/quadrilaterals.pdf" },
-            { name: "Maths Ch9 : Circles", file: "./files/maths/circles.pdf" },
-            { name: "Maths Ch10 : Heron’s Formula", file: "./files/maths/herons-formula.pdf" },
-            { name: "Maths Ch11 : Surface Areas and Volumes", file: "./files/maths/surface-area.pdf" },
-            { name: "Maths Ch12 : Statistics", file: "./files/maths/statistics.pdf" },
-            { name: "Maths : Rd Sharma", file: "./files/maths/rdsharma.pdf" },
+            { name: "Maths Ch1 : Real Numbers", file: "./files/maths/jemh101.pdf" },
+            { name: "Maths Ch2 : Polynomials", file: "./files/maths/jemh102.pdf" },
+            { name: "Maths Ch3 : Pair of Linear Equations in Two Variables", file: "./files/maths/jemh103.pdf" },
+            { name: "Maths Ch4 : Quadratic Equations", file: "./files/maths/jemh104.pdf" },
+            { name: "Maths Ch5 : Arithmetic Progressions", file: "./files/maths/jemh105.pdf" },
+            { name: "Maths Ch6 : Triangles", file: "./files/maths/jemh106.pdf" },
+            { name: "Maths Ch7 : Coordinate Geometry", file: "./files/maths/jemh107.pdf" },
+            { name: "Maths Ch8 : Introduction to Trigonometry", file: "./files/maths/jemh108.pdf" },
+            { name: "Maths Ch9 : Some Applications of Trigonometry", file: "./files/maths/jemh109.pdf" },
+            { name: "Maths Ch10 : Circles", file: "./files/maths/jemh110.pdf" },
+            { name: "Maths Ch11 : Areas Related to Circles", file: "./files/maths/jemh111.pdf" },
+            { name: "Maths Ch12 : Surface Areas and Volumes", file: "./files/maths/jemh112.pdf" },
+            { name: "Maths Ch13 : Statistics", file: "./files/maths/jemh113.pdf" },
+            { name: "Maths Ch14 : Probability", file: "./files/maths/jemh114.pdf" },
+
         ]
     },
 
     Science: {
         name: "Science",
         details: {
-            chapters: 12
+            chapters: 13
         },
         chapter: [
-            { name: "Chemistry Ch1 : Matter in Our Surroundings", file: "./files/science/matter.pdf" },
-            { name: "Chemistry Ch2 : Is Matter Around Us Pure?", file: "./files/science/pure-matter.pdf" },
-            { name: "Chemistry Ch3 : Atoms and Molecules", file: "./files/science/atoms.pdf" },
-            { name: "Chemistry Ch4 : Structure of the Atom", file: "./files/science/structure-atoms.pdf" },
-            { name: "Biology Ch1 : The Fundamental Unit of Life", file: "./files/science/cell.pdf" },
-            { name: "Biology Ch2 : Tissues", file: "./files/science/tissues.pdf" },
-            { name: "Physics Ch1 : Motion", file: "./files/science/motion.pdf" },
-            { name: "Physics Ch2 : Force and Laws of Motion", file: "./files/science/force-laws.pdf" },
-            { name: "Physics Ch3 : Gravitation", file: "./files/science/gravitation.pdf" },
-            { name: "Physics Ch4 : Work and Energy", file: "./files/science/work-energy.pdf" },
-            { name: "Physics Ch5 : Sound", file: "./files/science/sound.pdf" },
-            { name: "Biology Ch3 : Improvement in Food Resources", file: "./files/science/food-resources.pdf" },
+            { name: "Chemistry Ch1 : Chemical Reactions and Equations", file: "./files/science/jesc101.pdf" },
+            { name: "Chemistry Ch2 : Acids, Bases and Salts", file: "./files/science/jesc102.pdf" },
+            { name: "Chemistry Ch3 : Metals and Non-metals", file: "./files/science/jesc103.pdf" },
+            { name: "Chemistry Ch4 : Carbon and Its Compounds", file: "./files/science/jesc104.pdf" },
+            { name: "Biology Ch1 : Life Processes", file: "./files/science/jesc105.pdf" },
+            { name: "Biology Ch2 : Control and Coordination", file: "./files/science/jesc106.pdf" },
+            { name: "Biology Ch3 : How do Organisms Reproduce", file: "./files/science/jesc107.pdf" },
+            { name: "Biology Ch4 : Heredity", file: "./files/science/jesc108.pdf" },
+            { name: "Physics Ch1 : Light – Reflection and Refraction", file: "./files/science/jesc109.pdf" },
+            { name: "Physics Ch2 : The Human Eye and the Colourful World", file: "./files/science/jesc110.pdf" },
+            { name: "Physics Ch3 : Electricity", file: "./files/science/jesc111.pdf" },
+            { name: "Physics Ch4 : Magnetic Effects of Electric Current", file: "./files/science/jesc112.pdf" },
+            { name: "Biology Ch5 : Our Environment", file: "./files/science/jesc113.pdf" },
         ]
     },
 
@@ -48,33 +51,34 @@ const books = {
             chapters: 20
         },
         chapter: [
-            // History
-            { name: "History Ch1 : The French Revolution", file: "./files/sst/history-french-revolution.pdf" },
-            { name: "History Ch2 : Socialism in Europe and the Russian Revolution", file: "./files/sst/history-russian-revolution.pdf" },
-            { name: "History Ch3 : Nazism and the Rise of Hitler", file: "./files/sst/history-hitler.pdf" },
-            { name: "History Ch4 : Forest Society and Colonialism", file: "./files/sst/history-forest.pdf" },
-            { name: "History Ch5 : Pastoralists in the Modern World", file: "./files/sst/history-pastoralists.pdf" },
+            { name: "History Ch1 : The Rise of Nationalism in Europe", file: "./files/sst/jess301.pdf" },
+            { name: "History Ch2 : Nationalism in India", file: "./files/sst/jess302.pdf" },
+            { name: "History Ch3 : The Making of a Global World", file: "./files/sst/jess303.pdf" },
+            { name: "History Ch4 : The Age of Industrialisation", file: "./files/sst/jess304.pdf" },
+            { name: "History Ch5 : Print Culture and the Modern World", file: "./files/sst/jess305.pdf" },
 
             // Geography
-            { name: "Geography Ch1 : India – Size and Location", file: "./files/sst/geography-size-location.pdf" },
-            { name: "Geography Ch2 : Physical Features of India", file: "./files/sst/geography-physical-features.pdf" },
-            { name: "Geography Ch3 : Drainage", file: "./files/sst/geography-drainage.pdf" },
-            { name: "Geography Ch4 : Climate", file: "./files/sst/geography-climate.pdf" },
-            { name: "Geography Ch5 : Natural Vegetation and Wildlife", file: "./files/sst/geography-vegetation.pdf" },
-            { name: "Geography Ch6 : Population", file: "./files/sst/geography-population.pdf" },
+            { name: "Geography Ch1 : Resources and Development", file: "./files/sst/jess101.pdf" },
+            { name: "Geography Ch2 : Forest and Wildlife Resources", file: "./files/sst/jess102.pdf" },
+            { name: "Geography Ch3 : Water Resources", file: "./files/sst/jess103.pdf" },
+            { name: "Geography Ch4 : Agriculture", file: "./files/sst/jess104.pdf" },
+            { name: "Geography Ch5 : Minerals and Energy Resources", file: "./files/sst/jess105.pdf" },
+            { name: "Geography Ch6 : Manufacturing Industries", file: "./files/sst/jess106.pdf" },
+            { name: "Geography Ch7 : Lifelines of National Economy", file: "./files/sst/jess107.pdf" },
 
             // Political Science
-            { name: "Civics Ch1 : What is Democracy? Why Democracy?", file: "./files/sst/political-what-is-democracy.pdf" },
-            { name: "Civics Ch2 : Constitutional Design", file: "./files/sst/political-constitution.pdf" },
-            { name: "Civics Ch3 : Electoral Politics", file: "./files/sst/political-elections.pdf" },
-            { name: "Civics Ch4 : Working of Institutions", file: "./files/sst/political-institutions.pdf" },
-            { name: "Civics Ch5 : Democratic Rights", file: "./files/sst/political-rights.pdf" },
+            { name: "Civics Ch1 : Power Sharing", file: "./files/sst/jess401.pdf" },
+            { name: "Civics Ch2 : Federalism", file: "./files/sst/jess402.pdf" },
+            { name: "Civics Ch3 : Gender, Religion and Caste", file: "./files/sst/jess403.pdf" },
+            { name: "Civics Ch4 : Political Parties", file: "./files/sst/jess404.pdf" },
+            { name: "Civics Ch5 : Outcomes of Democracy", file: "./files/sst/jess405.pdf" },
 
             // Economics
-            { name: "Economics Ch1 : The Story of Village Palampur", file: "./files/sst/economics-palampur.pdf" },
-            { name: "Economics Ch2 : People as Resource", file: "./files/sst/economics-people.pdf" },
-            { name: "Economics Ch3 : Poverty as a Challenge", file: "./files/sst/economics-poverty.pdf" },
-            { name: "Economics Ch4 : Food Security in India", file: "./files/sst/economics-food-security.pdf" }
+            { name: "Economics Ch1 : Development", file: "./files/sst/jess201.pdf" },
+            { name: "Economics Ch2 : Sectors of the Indian Economy", file: "./files/sst/jess202.pdf" },
+            { name: "Economics Ch3 : Money and Credit", file: "./files/sst/jess203.pdf" },
+            { name: "Economics Ch4 : Globalisation and the Indian Economy", file: "./files/sst/jess204.pdf" },
+            { name: "Economics Ch5 : Consumer Rights", file: "./files/sst/jess205.pdf" }
         ]
     },
 
@@ -84,27 +88,27 @@ const books = {
             chapters: 21
         },
         chapter: [
-            // Beehive
-            { name: "Beehive Ch1 : The Fun They Had", file: "./files/english/bfth.pdf" },
-            { name: "Beehive Ch2 : The Sound of Music", file: "./files/english/tsom.pdf" },
-            { name: "Beehive Ch3 : The Little Girl", file: "./files/english/tlg.pdf" },
-            { name: "Beehive Ch4 : A Truly Beautiful Mind", file: "./files/english/atbm.pdf" },
-            { name: "Beehive Ch5 : The Snake and the Mirror", file: "./files/english/tsatm.pdf" },
-            { name: "Beehive Ch6 : My Childhood", file: "./files/english/mc.pdf" },
-            { name: "Beehive Ch7 : Reach for the Top", file: "./files/english/rftt.pdf" },
-            { name: "Beehive Ch8 : Kathmandu", file: "./files/english/tbol.pdf" },
-            { name: "Beehive Ch9 : If I Were You", file: "./files/english/iiwy.pdf" },
+            // First Flight
+            { name: "First Flight Ch1 : A Letter to God", file: "./files/english/jeff101.pdf" },
+            { name: "First Flight Ch2 : Nelson Mandela: Long Walk to Freedom", file: "./files/english/jeff102.pdf" },
+            { name: "First Flight Ch3 : Two Stories about Flying", file: "./files/english/jeff103.pdf" },
+            { name: "First Flight Ch4 : From the Diary of Anne Frank", file: "./files/english/jeff104.pdf" },
+            { name: "First Flight Ch5 : Glimpses of India", file: "./files/english/jeff105.pdf" },
+            { name: "First Flight Ch6 : Mijbil the Otter", file: "./files/english/jeff106.pdf" },
+            { name: "First Flight Ch7 : Madam Rides the Bus", file: "./files/english/jeff107.pdf" },
+            { name: "First Flight Ch8 : The Sermon at Benares", file: "./files/english/jeff108.pdf" },
+            { name: "First Flight Ch9 : The Proposal", file: "./files/english/jeff109.pdf" },
 
             // Moments
-            { name: "Moments Ch1 : Lost Child", file: "./files/english/tlc.pdf" },
-            { name: "Moments Ch2 : The Adventure of the Toto", file: "./files/english/taott.pdf" },
-            { name: "Moments Ch3 : Iswaran the Storyteller", file: "./files/english/itst.pdf" },
-            { name: "Moments Ch4 : In the Kingdom of Fools", file: "./files/english/itkof.pdf" },
-            { name: "Moments Ch5 : The Happy Prince", file: "./files/english/thp.pdf" },
-            { name: "Moments Ch6 : Weathering the Storm in Ersama", file: "./files/english/wtsie.pdf" },
-            { name: "Moments Ch7 : The Last Leaf", file: "./files/english/tll.pdf" },
-            { name: "Moments Ch8 : A House is Not a Home", file: "./files/english/ahinah.pdf" },
-            { name: "Moments Ch9 : The Beggar", file: "./files/english/tb.pdf" }
+            { name: "Footprints no feet Ch1 : A Triumph of Surgery", file: "./files/english/jefp101.pdf" },
+            { name: "Footprints no feet Ch2 : The Thief's Story", file: "./files/english/jefp102.pdf" },
+            { name: "Footprints no feet Ch3 : The Midnight Visitor", file: "./files/english/jefp103.pdf" },
+            { name: "Footprints no feet Ch4 : A Question of Trust", file: "./files/english/jefp104.pdf" },
+            { name: "Footprints no feet Ch5 : Footprints without Feet", file: "./files/english/jefp105.pdf" },
+            { name: "Footprints no feet Ch6 : The Making of a Scientists", file: "./files/english/jefp106.pdf" },
+            { name: "Footprints no feet Ch7 : The Necklace", file: "./files/english/jefp107.pdf" },
+            { name: "Footprints no feet Ch8 : Bholi", file: "./files/english/jefp108.pdf" },
+            { name: "Footprints no feet Ch9 : The Book That Saved The Earth", file: "./files/english/jefp109.pdf" }
         ]
 
     }
@@ -209,7 +213,7 @@ const help = () => {
 search.addEventListener("input", () => {
     let query = search.value;
     if (query.length == 0) {
-        suggestionContainer.style.bottom = "-360px";
+        suggestionContainer.style.bottom = "-460px";
         return;
     } else {
         suggestionContainer.style.bottom = "70px";
