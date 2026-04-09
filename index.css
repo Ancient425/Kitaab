@@ -12,7 +12,7 @@
     /* for darkmode a8a8a8 */
     --translucentbg: rgba(255, 255, 255, 0.590);
     --itemsbg: rgb(232, 235, 244);
-    --transition: 0.15s ease-out;
+    --transition: 0.25s ease;
 }
 
 ::-webkit-scrollbar,

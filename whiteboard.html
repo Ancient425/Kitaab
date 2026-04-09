@@ -1,349 +1,547 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Full Canvas Whiteboard</title>
-  <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      height: 100%;
-      width: 100%;
-      overflow: hidden;
-      background: #f4f6f7;
-      font-family: "Inter", system-ui, sans-serif;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
 
-    .whiteboard {
-      position: relative;
-      width: 100vw;
-      height: 100vh;
-      background: #fff;
-      overflow: hidden;
-    }
+:root {
+    --outline-color: black;
+}
 
-    /* === Tools === */
-    .tools {
-      position: absolute;
-      top: 20px;
-      left: 20px;
-      display: flex;
-      gap: 10px;
-      z-index: 30;
-    }
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
-    .tools button {
-      background: #21808d;
-      border: none;
-      padding: 12px;
-      border-radius: 10px;
-      cursor: pointer;
-      transition: all 0.25s ease;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
+body {
+    overflow: hidden;
+}
 
-    .tools button.active {
-      background: #f5a623;
-      transform: scale(1.1);
-    }
+.balls {
+    width: 350px;
+    height: 350px;
+    background: royalblue;
+    border-radius: 50%;
+    position: absolute;
+    filter: blur(250px);
+}
 
-    .tools button:hover {
-      background: #27a0b5;
-      transform: scale(1.1);
-    }
+.ball1 {
+    top: 10px;
+    left: 10px;
+}
 
-    .tools button img {
-      width: 24px;
-      height: 24px;
-    }
+.ball2 {
+    bottom: 10px;
+    right: 10px;
+}
 
-    /* Highlighter menu */
-    .tool-with-menu {
-      position: relative;
-      display: inline-block;
-    }
 
-    .highlighter-menu {
-      position: absolute;
-      top: calc(100% + 8px);
-      left: 50%;
-      transform: translateX(-50%) translateY(-6px) scale(0.985);
-      min-width: 240px;
-      opacity: 0;
-      pointer-events: none;
-      background: rgba(0, 0, 0, 0.65);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      border-radius: 12px;
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
-      padding: 10px 14px;
-      z-index: 2000;
-      transition: opacity 190ms ease, transform 230ms cubic-bezier(.2,.9,.3,1);
-    }
+.whiteboard {
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.808);
+    transition: 1s ease;
+    z-index: 0;
+}
 
-    .tool-with-menu.open .highlighter-menu,
-    .tool-with-menu:hover .highlighter-menu {
-      opacity: 1;
-      pointer-events: auto;
-      transform: translateX(-50%) translateY(0) scale(1);
-    }
+.whiteboard.active {
+    background: white;
+}
 
-    .highlighter-menu .controls {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-    }
+.toolsContainer {
+    width: 12vw;
+    height: 75px;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 20px;
+    border-radius: 20px;
+    background: rgba(0, 0, 0, 0.154);
+    transition: 0.75s ease;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    z-index: 100;
+}
 
-    .highlighter-color {
-      width: 38px;
-      height: 30px;
-      border: 0;
-      background: none;
-      border-radius: 10px;
-      padding: 0;
-    }
+.toolsContainer.active {
+    width: 18vw;
+    bottom: 40px;
+}
 
-    .hl-size {
-      width: 150px;
-    }
+.toolsContainer button {
+    background: #21808d;
+    border: none;
+    padding: 12px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 
-    .hl-size[type="range"] {
-      appearance: none;
-      -webkit-appearance: none;
-      height: 8px;
-      background: #21808d;
-      border-radius: 6px;
-    }
+.toolsContainer button.active {
+    background: #f5a623;
+    transform: scale(1.1);
+}
 
-    .hl-size[type="range"]::-webkit-slider-runnable-track {
-      height: 8px;
-      background: linear-gradient(90deg, #27a0b5, #21808d);
-      border-radius: 10px;
-    }
+.toolsContainer button:hover {
+    background: #27a0b5;
+    transform: scale(1.1);
+}
 
-    .hl-size[type="range"]::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      height: 20px;
-      width: 7.5px;
-      border-radius: 1px;
-      background: #fff;
-      margin-top: -6px;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
-    }
+.toolsContainer button img {
+    width: 24px;
+    height: 24px;
+}
 
-    canvas {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      user-select: none;
-    }
+/* shapes */
 
-    #highlightCanvas { z-index: 1; }
-    #shapeCanvas { z-index: 2; }
-    #previewCanvas { z-index: 3; pointer-events: none; }
-  </style>
+.shapeContainer {
+    position: absolute;
+    top: 100px;
+    left: 100px;
+}
+
+.innerShapeContainer {
+    position: relative;
+}
+
+.innerShapeContainer>textarea {
+    position: absolute;
+    background: transparent;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: transparent;
+    border: none;
+    outline: none;
+    cursor: grab;
+    width: 200px;
+    height: 200px;
+}
+
+.rectshape {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border: 2px solid var(--outline-color);
+    cursor: grab;
+
+}
+
+.circleshape {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border: 2px solid var(--outline-color);
+    border-radius: 50%;
+    cursor: grab;
+}
+
+.lineshape {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border: 1px solid var(--outline-color);
+    cursor: grab;
+    background: var(--outline-color);
+}
+
+/* Hover Menu */
+.hoverMenu {
+    position: fixed;
+    border-radius: 20px;
+    width:50vw;
+    background: rgba(0, 0, 0, 0.154);
+    transition: 0.75s ease;
+    backdrop-filter: blur(10px);
+    color: black;
+    padding: 12px 18px;
+    font-size: 12px;
+    font-family: "poppins", sans-serif;
+    white-space: nowrap;
+    z-index: 1000;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.menuItem {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 500;
+}
+
+.menuItem input {
+    min-width: 60px;
+    max-width:110px;
+    padding: 6px 8px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.1);
+    color: black;
+    border-radius: 6px;
+    font-size: 11px;
+    transition: all 0.2s ease;
+}
+
+.menuItem input:focus {
+    outline: none;
+    border-color: #27a0b5;
+    background: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 0 8px rgba(39, 160, 181, 0.3);
+}
+
+.deleteBtn {
+    background: #e74c3c;
+    border: none;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 11px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.deleteBtn:hover {
+    background: #c0392b;
+    transform: scale(1.05);
+}
+    </style>
 </head>
+
 <body>
+    <div class="balls ball1"></div>
+    <div class="balls ball2"></div>
 
-  <div class="whiteboard">
-    <div class="tools">
-      <button data-tool="circle" class="active"><img src="./media/circle-regular-full (1).svg" alt="Circle" /></button>
-      <button data-tool="square"><img src="./media/square-regular-full.svg" alt="Square" /></button>
-      <button data-tool="line"><img src="./media/grip-lines-solid-full.svg" alt="Line" /></button>
-
-      <span class="tool-with-menu">
-        <button data-tool="highlighter" id="hlBtn"><img src="./media/highlighter-solid-full.svg" alt="Highlighter" /></button>
-        <div class="highlighter-menu" id="hlMenu">
-          <div class="controls">
-            <input type="color" id="hlColor" class="highlighter-color" value="#ffe34d" />
-            <input type="range" id="hlSize" class="hl-size" min="4" max="60" value="18" />
-          </div>
-        </div>
-      </span>
-
-      <button id="undoBtn"><img src="./media/rotate-left-solid-full.svg" alt="Undo" /></button>
-      <button id="redoBtn"><img src="./media/rotate-right-solid-full.svg" alt="Redo" /></button>
+    <div class="toolsContainer">
+        <button data-tool="circle" class="circle"><img src="./media/circle-regular-full (1).svg" alt="Circle" /></button>
+        <button data-tool="square" class="rect"><img src="./media/square-regular-full.svg" alt="Square" /></button>
+        <button data-tool="line" class="line"><img src="./media/grip-lines-solid-full.svg" alt="Line" /></button>
     </div>
+    <div class="whiteboard">
+    </div>
+    <script>
+        const get = (val) => { return document.querySelector(val) }
+const getAll = (val) => { return document.querySelectorAll(val) }
 
-    <canvas id="highlightCanvas"></canvas>
-    <canvas id="shapeCanvas"></canvas>
-    <canvas id="previewCanvas"></canvas>
-  </div>
+const whiteboard = get(".whiteboard");
+const toolsContainer = get(".toolsContainer");
+let textarea = getAll("textarea");
+const body = get("body")
 
-  <script>
-    const whiteboard = document.querySelector('.whiteboard');
-    const highlightCanvas = document.getElementById('highlightCanvas');
-    const shapeCanvas = document.getElementById('shapeCanvas');
-    const previewCanvas = document.getElementById('previewCanvas');
+// tools
+const rect = get(".rect")
+const circle = get(".circle")
+const line = get(".line")
 
-    const highlightCtx = highlightCanvas.getContext('2d');
-    const shapeCtx = shapeCanvas.getContext('2d');
-    const previewCtx = previewCanvas.getContext('2d');
+whiteboard.addEventListener("click", () => {
+    whiteboard.classList.add("active");
+    toolsContainer.classList.add("active");
+    document.documentElement.style.setProperty('--outline-color', '#000');
+});
 
-    let currentTool = 'circle';
-    let drawing = false;
-    let startX = 0, startY = 0;
-    let activePointerId = null;
-    let isFreehand = false;
-    let history = [], redoStack = [];
 
-    function resizeCanvases() {
-      const w = window.innerWidth;
-      const h = window.innerHeight;
-      [highlightCanvas, shapeCanvas, previewCanvas].forEach(c => {
-        c.width = w;
-        c.height = h;
-      });
-      restoreHistory();
+
+// resize observer
+
+function observeTextarea(textareaEl, shapeEl) {
+    const resizeObserver = new ResizeObserver(entries => {
+        for (let entry of entries) {
+            const { width, height } = entry.contentRect;
+            console.log('Textarea resized:', width, height);
+
+            // Example: match shape size to textarea
+            shapeEl.style.width = width - 10 + 'px';
+            shapeEl.style.height = height - 10 + 'px';
+        }
+    });
+
+    resizeObserver.observe(textareaEl);
+}
+
+function makeDraggable(element) {
+    let offsetX = 0, offsetY = 0, mouseX = 0, mouseY = 0;
+
+    element.onmousedown = (e) => {
+        // Prevent dragging if the user is trying to type in the textarea
+        if (e.target.tagName === 'TEXTAREA') return;
+
+        e.preventDefault();
+        // Get initial cursor position
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+
+        document.onmousemove = (e) => {
+            // Calculate how far the mouse has moved
+            offsetX = mouseX - e.clientX;
+            offsetY = mouseY - e.clientY;
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+
+            // Set the element's new position
+            element.style.top = (element.offsetTop - offsetY) + "px";
+            element.style.left = (element.offsetLeft - offsetX) + "px";
+        };
+
+        // Stop moving when mouse button is released
+        document.onmouseup = () => {
+            document.onmousemove = null;
+            document.onmouseup = null;
+        };
+    };
+}
+
+function createHoverMenu(container, shape) {
+    const menu = document.createElement("div");
+    menu.classList.add("hoverMenu");
+    menu.style.display = "none";
+
+    const width = shape.offsetWidth;
+    const height = shape.offsetHeight;
+    const borderWidth = parseInt(window.getComputedStyle(shape).borderWidth);
+    const bgColor = window.getComputedStyle(shape).backgroundColor;
+    const borderColor = window.getComputedStyle(shape).borderColor;
+
+    menu.innerHTML = `
+        <div class="menuItem">
+            <span>W:</span>
+            <input type="number" class="widthInput" value="${width}" min="10">
+        </div>
+        <div class="menuItem">
+            <span>H:</span>
+            <input type="number" class="heightInput" value="${height}" min="10">
+        </div>
+        <div class="menuItem">
+            <span>T:</span>
+            <input type="number" class="thicknessInput" value="${borderWidth}" min="1">
+        </div>
+        <div class="menuItem">
+            <span>B:</span>
+            <input type="text" class="bgInput" value="${bgColor}" placeholder="color">
+        </div>
+        <div class="menuItem">
+            <span>BC:</span>
+            <input type="text" class="borderColorInput" value="${borderColor}" placeholder="color">
+        </div>
+        <button class="deleteBtn">Delete</button>
+    `;
+
+    const widthInput = menu.querySelector(".widthInput");
+    const heightInput = menu.querySelector(".heightInput");
+    const thicknessInput = menu.querySelector(".thicknessInput");
+    const bgInput = menu.querySelector(".bgInput");
+    const borderColorInput = menu.querySelector(".borderColorInput");
+    const deleteBtn = menu.querySelector(".deleteBtn");
+
+    // Update shape on input change
+    widthInput.addEventListener("input", () => {
+        shape.style.width = widthInput.value + "px";
+    });
+
+    heightInput.addEventListener("input", () => {
+        shape.style.height = heightInput.value + "px";
+    });
+
+    thicknessInput.addEventListener("input", () => {
+        shape.style.borderWidth = thicknessInput.value + "px";
+    });
+
+    bgInput.addEventListener("input", () => {
+        shape.style.backgroundColor = bgInput.value;
+    });
+
+    borderColorInput.addEventListener("input", () => {
+        shape.style.borderColor = borderColorInput.value;
+    });
+
+    deleteBtn.addEventListener("click", () => {
+        container.remove();
+        menu.remove();
+    });
+
+    body.appendChild(menu);
+
+    let menuVisible = false;
+    let hideTimeout;
+
+    function updateMenuPosition() {
+        if (menuVisible) {
+            const rect = shape.getBoundingClientRect();
+            menu.style.left = (rect.left + rect.width / 2 - menu.offsetWidth / 2) + "px";
+            menu.style.top = (rect.top - 80) + "px";
+        }
     }
 
-    window.addEventListener('resize', resizeCanvases);
-    resizeCanvases();
+    // Show menu on hover over container
+    container.addEventListener("mouseenter", () => {
+        clearTimeout(hideTimeout);
+        menuVisible = true;
+        menu.style.display = "flex";
+        updateMenuPosition();
+    });
 
-    function saveState() {
-      const combined = document.createElement('canvas');
-      combined.width = shapeCanvas.width;
-      combined.height = shapeCanvas.height;
-      const ctx = combined.getContext('2d');
-      ctx.drawImage(highlightCanvas, 0, 0);
-      ctx.drawImage(shapeCanvas, 0, 0);
-      history.push(combined.toDataURL());
-      redoStack = [];
-      if (history.length > 100) history.shift();
+    // Keep menu visible when hovering over it
+    menu.addEventListener("mouseenter", () => {
+        clearTimeout(hideTimeout);
+        menuVisible = true;
+        menu.style.display = "flex";
+    });
+
+    menu.addEventListener("mouseleave", () => {
+        hideTimeout = setTimeout(() => {
+            menuVisible = false;
+            menu.style.display = "none";
+        }, 800);
+    });
+
+    // Hide menu when leaving container (with delay)
+    container.addEventListener("mouseleave", () => {
+        hideTimeout = setTimeout(() => {
+            menuVisible = false;
+            menu.style.display = "none";
+        }, 800);
+    });
+
+    // Update menu position continuously as shape moves
+    const positionInterval = setInterval(() => {
+        if (menuVisible) {
+            updateMenuPosition();
+        } else {
+            clearInterval(positionInterval);
+        }
+    }, 50);
+
+    return menu;
+}
+
+rect.addEventListener("click", () => {
+    let container = document.createElement("div");
+    container.classList.add("rectangleContainer", "shapeContainer");
+
+    let Innercontainer = document.createElement("div");
+    Innercontainer.classList.add("innerShapeContainer");
+
+    let texta = document.createElement("textarea");
+    texta.setAttribute("id", Date.now());
+
+    let shape = document.createElement("div");
+    shape.classList.add("rectshape");
+
+    Innercontainer.appendChild(texta);
+    Innercontainer.appendChild(shape);
+
+    observeTextarea(texta, shape);
+
+    container.appendChild(Innercontainer);
+    document.body.appendChild(container);
+
+    // --- Add Dragging Logic Here ---
+    makeDraggable(container);
+    createHoverMenu(container, shape);
+});
+
+circle.addEventListener("click", () => {
+    let container = document.createElement("div");
+    container.classList.add("circleContainer", "shapeContainer");
+
+    let Innercontainer = document.createElement("div");
+    Innercontainer.classList.add("innerShapeContainer");
+
+    let texta = document.createElement("textarea");
+    texta.setAttribute("id", Date.now());
+    texta.spellcheck = false;
+
+    let shape = document.createElement("div");
+    shape.classList.add("circleshape");
+
+    Innercontainer.appendChild(texta);
+    Innercontainer.appendChild(shape);
+
+    observeTextarea(texta, shape);
+
+    container.appendChild(Innercontainer);
+    document.body.appendChild(container);
+
+    // --- Add Dragging Logic Here ---
+    makeDraggable(container);
+    createHoverMenu(container, shape);
+});
+
+line.addEventListener("click", () => {
+    let container = document.createElement("div");
+    container.classList.add("lineContainer", "shapeContainer");
+
+    let Innercontainer = document.createElement("div");
+    Innercontainer.classList.add("innerShapeContainer");
+
+    let texta = document.createElement("textarea");
+    texta.setAttribute("id", Date.now());
+    texta.spellcheck = false;
+
+    let shape = document.createElement("div");
+    shape.classList.add("lineshape");
+
+    Innercontainer.appendChild(texta);
+    Innercontainer.appendChild(shape);
+
+    observeTextarea(texta, shape);
+
+    container.appendChild(Innercontainer);
+    document.body.appendChild(container);
+
+    // --- Add Dragging Logic Here ---
+    makeDraggable(container);
+    createHoverMenu(container, shape);
+});
+
+const TIME_LIMIT = 10; //seconds
+let count = 0;
+let triggered = false;
+
+setInterval(() => {
+    if (count < TIME_LIMIT) {
+        count++;
+        console.log(count)
+        whiteboard.classList.add("active");
+        toolsContainer.classList.add("active");
+        document.documentElement.style.setProperty('--outline-color', '#000');
+    } else if (!triggered) {
+        whiteboard.classList.remove("active");
+        toolsContainer.classList.remove("active");
+        document.documentElement.style.setProperty('--outline-color', '#fff');
+        triggered = true;
     }
+}, 1000)
 
-    function restoreHistory() {
-      [highlightCtx, shapeCtx, previewCtx].forEach(ctx => ctx.clearRect(0, 0, shapeCanvas.width, shapeCanvas.height));
-      if (!history.length) return;
-      const img = new Image();
-      img.onload = () => shapeCtx.drawImage(img, 0, 0, shapeCanvas.width, shapeCanvas.height);
-      img.src = history[history.length - 1];
-    }
+document.addEventListener("mousemove", () => {
+    count = 0;
+    triggered = false;
+    whiteboard.classList.add("active");
+    toolsContainer.classList.add("active");
+    document.documentElement.style.setProperty('--outline-color', '#000');
+})
 
-    // Tool buttons
-    document.querySelectorAll('.tools button[data-tool]').forEach(btn => {
-      btn.addEventListener('click', () => {
-        currentTool = btn.dataset.tool;
-        document.querySelectorAll('.tools button[data-tool]').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-      });
-    });
-
-    // Undo / Redo
-    document.getElementById('undoBtn').addEventListener('click', () => {
-      if (history.length > 1) {
-        redoStack.push(history.pop());
-        restoreHistory();
-      }
-    });
-
-    document.getElementById('redoBtn').addEventListener('click', () => {
-      if (redoStack.length) {
-        history.push(redoStack.pop());
-        restoreHistory();
-      }
-    });
-
-    // Highlighter
-    const hlBtn = document.getElementById('hlBtn');
-    const hlColor = document.getElementById('hlColor');
-    const hlSize = document.getElementById('hlSize');
-    const hlWrapper = hlBtn.closest('.tool-with-menu');
-    hlBtn.addEventListener('click', e => {
-      hlWrapper.classList.toggle('open');
-      e.stopPropagation();
-    });
-    document.addEventListener('click', e => {
-      if (!e.target.closest('.tool-with-menu')) hlWrapper.classList.remove('open');
-    });
-    function setHlCssVar() {
-      hlWrapper.style.setProperty('--hl-color', hlColor.value);
-    }
-    setHlCssVar();
-    hlColor.addEventListener('input', setHlCssVar);
-
-    // Drawing
-    whiteboard.addEventListener('pointerdown', e => {
-      if (e.target.closest('button, img, input')) return;
-      drawing = true;
-      isFreehand = currentTool === 'highlighter';
-      const rect = whiteboard.getBoundingClientRect();
-      startX = e.clientX - rect.left;
-      startY = e.clientY - rect.top;
-      activePointerId = e.pointerId;
-      if (whiteboard.setPointerCapture) whiteboard.setPointerCapture(activePointerId);
-
-      if (isFreehand) {
-        highlightCtx.lineCap = 'round';
-        highlightCtx.lineJoin = 'round';
-        highlightCtx.strokeStyle = hlColor.value || '#ffe34d';
-        highlightCtx.lineWidth = parseInt(hlSize.value || 18);
-        highlightCtx.globalAlpha = 0.32;
-        highlightCtx.beginPath();
-        highlightCtx.moveTo(startX, startY);
-      }
-    });
-
-    whiteboard.addEventListener('pointermove', e => {
-      if (!drawing || e.pointerId !== activePointerId) return;
-      const rect = whiteboard.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-      previewCtx.clearRect(0, 0, previewCanvas.width, previewCanvas.height);
-
-      if (isFreehand) {
-        highlightCtx.lineTo(x, y);
-        highlightCtx.stroke();
-      } else {
-        drawShape(previewCtx, startX, startY, x, y, currentTool);
-      }
-    });
-
-    function finishPointer(e) {
-      if (!drawing) return;
-      if (e && e.pointerId && e.pointerId !== activePointerId) return;
-      drawing = false;
-      previewCtx.clearRect(0, 0, previewCanvas.width, previewCanvas.height);
-      const rect = whiteboard.getBoundingClientRect();
-      const endX = e ? e.clientX - rect.left : startX;
-      const endY = e ? e.clientY - rect.top : startY;
-
-      if (!isFreehand) drawShape(shapeCtx, startX, startY, endX, endY, currentTool);
-      saveState();
-    }
-
-    whiteboard.addEventListener('pointerup', finishPointer);
-    whiteboard.addEventListener('pointercancel', finishPointer);
-    window.addEventListener('pointerup', finishPointer);
-
-    function drawShape(ctx, x1, y1, x2, y2, tool) {
-      ctx.lineWidth = 2;
-      ctx.strokeStyle = "#000";
-      ctx.beginPath();
-      if (tool === "circle") {
-        const r = Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
-        ctx.arc(x1, y1, r, 0, Math.PI * 2);
-      } else if (tool === "square") {
-        ctx.rect(x1, y1, x2 - x1, y2 - y1);
-      } else if (tool === "line") {
-        ctx.moveTo(x1, y1);
-        ctx.lineTo(x2, y2);
-      }
-      ctx.stroke();
-    }
-
-    // initial blank state
-    const empty = document.createElement('canvas');
-    empty.width = shapeCanvas.width;
-    empty.height = shapeCanvas.height;
-    history.push(empty.toDataURL());
-    saveState();
-  </script>
+document.addEventListener("keypress", () => {
+    count = 0;
+    triggered = false;
+    whiteboard.classList.add("active");
+    toolsContainer.classList.add("active");
+    document.documentElement.style.setProperty('--outline-color', '#000');
+})
+    </script>
 </body>
+
 </html>
