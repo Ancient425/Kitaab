@@ -31,7 +31,7 @@
       width: 50vw;
       height: 100vh;
       background: #fff;
-      position: absolute;
+      position: relative;
       right: 0;
       overflow: hidden;
       /* removed transition */
@@ -244,7 +244,7 @@
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
       padding: 10px 14px;
       z-index: 2000;
-      transition: opacity 190ms ease, transform 230ms cubic-bezier(.2,.9,.3,1);
+      transition: opacity 190ms ease, transform 230ms cubic-bezier(.2, .9, .3, 1);
     }
 
     /* show via class so JS can control linger and animation */
@@ -268,9 +268,9 @@
       width: 38px;
       height: 30px;
       border: 0;
-      padding:0;
+      padding: 0;
       background: none;
-      border-radius:10px;
+      border-radius: 10px;
     }
 
     .hl-size {
@@ -287,7 +287,7 @@
     }
 
     .hl-size[type="range"]::-webkit-slider-runnable-track {
-      height:   8px;
+      height: 8px;
       background: linear-gradient(90deg, #27a0b5, #21808d);
       border-radius: 10px;
     }
@@ -296,7 +296,7 @@
       -webkit-appearance: none;
       height: 20px;
       width: 7.5px;
-      border-radius:1px;
+      border-radius: 1px;
       background: #fff;
       margin-top: -6px;
       box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
@@ -345,6 +345,26 @@
       width: 100%;
       height: 100%;
     }
+
+    .infodata {
+      width: 100px;
+      height: 50px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 35px;
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(0, 0, 0, 1);
+      border-radius: 2px;
+      padding: 6px 12px;
+      color: #fff;
+      font-size: 14px;
+      z-index: 100;
+      display: none;
+    }
   </style>
 </head>
 
@@ -363,18 +383,21 @@
   <iframe src=""></iframe>
 
   <div class="whiteboard">
+    <div class="infodata"></div>
     <div class="tools">
       <button data-tool="circle" class="active"><img src="./media/circle-regular-full (1).svg" alt="Circle" /></button>
       <button data-tool="square"><img src="./media/square-regular-full.svg" alt="Square" /></button>
       <button data-tool="line"><img src="./media/grip-lines-solid-full.svg" alt="Line" /></button>
       <span class="tool-with-menu">
-        <button data-tool="highlighter" id="hlBtn"><img src="./media/highlighter-solid-full.svg" alt="Highlighter" /></button>
+        <button data-tool="highlighter" id="hlBtn"><img src="./media/highlighter-solid-full.svg"
+            alt="Highlighter" /></button>
         <div class="highlighter-menu" id="hlMenu">
           <div class="controls">
             <input type="color" id="hlColor" class="highlighter-color" value="#ffe34d" />
             <input type="range" id="hlSize" class="hl-size" min="4" max="60" value="18" />
-          </div>  
+          </div>
         </div>
+
       </span>
       <button id="undoBtn"><img src="./media/rotate-left-solid-full.svg" alt="Undo" /></button>
       <button id="redoBtn"><img src="./media/rotate-right-solid-full.svg" alt="Redo" /></button>
@@ -399,16 +422,21 @@
     const whiteboard = document.querySelector(".whiteboard");
     const canvas = document.querySelectorAll("canvas");
     const rangeContainer = document.querySelector(".rangeContainer");
+    const infoData = document.querySelector(".infodata");
 
     function updateSplit(value) {
       const percent = parseFloat(value);
       pdf.style.width = `${percent}vw`;
       whiteboard.style.width = `${100 - percent}vw`;
       canvas.forEach(c => c.style.width = `${100 - percent}vw`);
+      let whiteboard_width = whiteboard.clientWidth;
+      let whiteboard_height = whiteboard.clientHeight;
+      infoData.innerHTML = `${whiteboard_height} × ${whiteboard_width}`;
       resizeCanvases();
     }
 
-    divider.addEventListener("input", () => updateSplit(divider.value));
+    divider.addEventListener("input", () => {updateSplit(divider.value); infoData.style.display = "flex";});
+    divider.addEventListener("mouseleave", () => { infoData.style.display = "none"; });
 
     document.querySelectorAll(".ratio-buttons button").forEach(btn => {
       btn.addEventListener("click", () => {
@@ -650,14 +678,14 @@
     // Now that canvases exist and initial state is saved, set initial split
     updateSplit(divider.value);
 
-    window.addEventListener("beforeunload" , ()=>{
-      let result = confirm("Are you sure you want to leave? Your whiteboard diagrams will be lost.");
-      if (!result){
-        event.preventDefault();
-        event.returnValue = '';
-      }
-    })
-    
+    // window.addEventListener("beforeunload" , ()=>{
+    //   let result = confirm("Are you sure you want to leave? Your whiteboard diagrams will be lost.");
+    //   if (!result){
+    //     event.preventDefault();
+    //     event.returnValue = '';
+    //   }
+    // })
+
   </script>
 </body>
 

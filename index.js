@@ -1,6 +1,6 @@
 const books = {
     Mathematics: {
-        name: "Mathematics",
+        name: "maths",
         details: {
             chapters: 14
         },
@@ -24,7 +24,7 @@ const books = {
     },
 
     Science: {
-        name: "Science",
+        name: "science",
         details: {
             chapters: 13
         },
@@ -45,8 +45,8 @@ const books = {
         ]
     },
 
-    SocialScience: {
-        name: "Social Science",
+    Social: {
+        name: "social Science",
         details: {
             chapters: 20
         },
@@ -83,7 +83,7 @@ const books = {
     },
 
     English: {
-        name: "English",
+        name: "english",
         details: {
             chapters: 21
         },
@@ -114,75 +114,33 @@ const books = {
     }
 };
 
-// darkmode shit
+// no more darkmode shit 
 
-const toggleDarkMode = document.getElementById('toggleDarkMode');
-const root = document.documentElement;
+const chaptersLink = document.querySelector(".chapterslink")
+const recentsLink = document.querySelector(".recentslink")
 
-// Check for saved dark mode preference
-const isDarkMode = localStorage.getItem('darkMode') === 'true';
-if (isDarkMode) {
-    toggleDarkMode.checked = true;
-    applyDarkMode();
-}
+recentsLink.addEventListener("click" , () => {
+    chaptersLink.classList.remove("active")
+    recentsLink.classList.add("active")
+})
 
-toggleDarkMode.addEventListener('change', () => {
-    if (toggleDarkMode.checked) {
-        applyDarkMode();
-        localStorage.setItem('darkMode', 'true');
-    } else {
-        removeDarkMode();
-        localStorage.setItem('darkMode', 'false');
-    }
-});
-
-function applyDarkMode() {
-    const darkTheme = {
-        '--muted': '#a8a8a8',
-        '--itemsbg': '#2d2d2d',
-        '--translucentbg': 'rgba(26, 26, 26, 0.590)',
-        '--bg': '#000',
-        '--text': '#ffffff',
-    };
-    Object.entries(darkTheme).forEach(([key, value], index) => {
-        root.style.setProperty(key, value);
-    });
-}
-
-function removeDarkMode() {
-    root.style.setProperty('--bg', '#e7e5e5ff');
-    root.style.setProperty('--text', '#000');
-    root.style.setProperty('--muted', '#232323');
-    root.style.setProperty('--itemsbg', 'rgb(232, 235, 244)');
-    root.style.setProperty('--translucentbg', 'rgba(255, 255, 255, 0.590)');
-}
-
-//searching and all
-
-window.onload = () => {
-    search.focus();
-}
-
-const search = document.querySelector(".inputSearch");
+chaptersLink.addEventListener("click" , () => {
+    recentsLink.classList.remove("active")
+    chaptersLink.classList.add("active")
+})
 
 // name and place of every chapter
 
 const allChapters = Object.values(books).flatMap(subject =>
     subject.chapter.map(ch => ({
         name: ch.name,
-        file: ch.file
+        file: ch.file,
+        subject: subject.name
     }))
 );
 
-const suggestionContainer = document.querySelector(".suggestionContainer");
-const suggestionInnerContainer = document.querySelector(".suggestionInnerContainer");
-
-const addRecent = (chapter) => {
-
-}
-
-const openChapter = (chapter) => {
-    addRecent(chapter);
+const openChapter = (chapter , subject) => {
+    addRecent(chapter , subject || chapter.subject || "Unknown");
     if (chapter.file) {
         let location = `pdf-viewer.html?file=${(chapter.file)}`;
         window.open(location, "_blank")
@@ -191,10 +149,93 @@ const openChapter = (chapter) => {
     }
 }
 
+const renderRecent = () => {
+    const recentContainer = document.querySelector(".recentListContainer");
+    if (!recentContainer) return;
+
+    const recentChapters = JSON.parse(localStorage.getItem("recentChapters") || "[]").slice(0, 2);
+    recentContainer.innerHTML = "";
+    recentChapters.forEach((chapter) => {
+        recentContainer.innerHTML += `
+            <div class="recentItem">
+                <div class="label">
+                    <p class="name">${chapter.name}</p>
+                    <p>...</p>
+                </div>
+                <div class="tag ${chapter.subject}">${chapter.subject}</div>
+                    <div class="buttonHolder">
+                        <button onclick="window.open('pdf-viewer.html?file=${(chapter.file)}', '_blank')"> <img src="./media/arrow-right-short.svg"> </button>
+                    </div>
+            </div>
+        `;
+    });
+
+    const recents = document.querySelector(".recents");
+    recents.innerHTML = "";
+    const recentChapters_all = JSON.parse(localStorage.getItem("recentChapters") || "[]")
+    recentChapters_all.forEach((chapter) => {
+        recents.innerHTML += `
+            <div class="recentItem">
+                <div class="label">
+                    <p class="name">${chapter.name}</p>
+                    <p>...</p>
+                </div>
+                <div class="tag ${chapter.subject}">${chapter.subject}</div>
+                    <div class="buttonHolder">
+                        <button onclick="window.open('pdf-viewer.html?file=${(chapter.file)}', '_blank')"> <img src="./media/arrow-right-short.svg"> </button>
+                    </div>
+            </div>
+        `;
+    })
+};
+
+const addRecent = (chapter , subject) => {
+    let recentChapters = JSON.parse(localStorage.getItem("recentChapters") || "[]");
+    recentChapters = recentChapters.filter((recent) => recent.file !== chapter.file);
+    recentChapters.unshift({ name: chapter.name, file: chapter.file , subject: (subject || "Unknown").split(" ")[0]});
+    localStorage.setItem("recentChapters", JSON.stringify(recentChapters));
+    renderRecent();
+}
+
+renderRecent();
+
+const dropContainer = document.querySelector(".dropContainer");
+
+dropContainer.addEventListener("dragover", (event) => {
+    event.preventDefault();
+    event.dataTransfer.dropEffect = "copy";
+    dropContainer.classList.add("dragActive");
+});
+
+dropContainer.addEventListener("dragleave", () => {
+    dropContainer.classList.remove("dragActive");
+});
+
+dropContainer.addEventListener("drop", (event) => {
+    event.preventDefault();
+    dropContainer.classList.remove("dragActive");
+
+    const file = event.dataTransfer.files[0];
+    if (!file) return;
+
+    let viewerWindow;
+    const handleViewerReady = (messageEvent) => {
+        if (messageEvent.source !== viewerWindow || messageEvent.data?.type !== "file-viewer-ready") return;
+        window.removeEventListener("message", handleViewerReady);
+        viewerWindow.postMessage({ type: "open-dropped-file", file }, "*");
+    };
+
+    window.addEventListener("message", handleViewerReady);
+    viewerWindow = window.open("./file-viewer.html", "_blank");
+    if (!viewerWindow) window.removeEventListener("message", handleViewerReady);
+});
+
 // search functions
 
 const all_chapters = () => {
     suggestionInnerContainer.innerHTML = "";
+    suggestionInnerContainer.style.maxHeight = "70vh";
+    suggestionInnerContainer.style.overflowY = "auto";
     allChapters.forEach((c) => {
         const div = document.createElement("div");
         div.classList.add("suggestion");
@@ -210,6 +251,27 @@ const help = () => {
     window.open("help.html", "_blank")
 }
 
+const search = document.querySelector(".searchbar")
+const searchContainer = document.querySelector(".searchContainer")
+const suggestionContainer = document.querySelector(".suggestionContainer")
+const suggestionInnerContainer = document.querySelector(".suggestionInnerContainer")
+const searchBtn = document.querySelector(".searchBtn")
+
+let currentSearchResult = null;
+
+searchBtn.addEventListener("click", () => {
+    searchContainer.classList.toggle("searchActive");
+    search.focus();
+    all_chapters();
+})
+
+document.addEventListener("keypress" , (e) => {
+    if(searchContainer.classList.contains("searchActive")) return;
+    searchContainer.classList.toggle("searchActive");
+    search.focus();
+    all_chapters();
+})
+
 search.addEventListener("input", () => {
     let query = search.value;
     if (query.length == 0) {
@@ -218,7 +280,7 @@ search.addEventListener("input", () => {
     } else {
         suggestionContainer.style.bottom = "70px";
         query = query.toLowerCase();
-        let words = query.split(" ")
+        let words = query.trim().split(/\s+/).filter(Boolean)
         const filtered = allChapters.filter((c) => {
             const chapterNameLower = c.name.toLowerCase();
             return words.every(word => chapterNameLower.includes(word));
@@ -260,11 +322,7 @@ search.addEventListener("input", () => {
 
                 // keyboard sense
 
-                document.addEventListener("keypress", (e) => {
-                    if (e.key == "Enter") {
-                        openChapter(filtered[0])
-                    }
-                })
+                currentSearchResult = filtered[0];
 
             } else {
                 suggestionInnerContainer.innerHTML = "";
@@ -281,33 +339,38 @@ search.addEventListener("input", () => {
 
         }
     }
-    eval(query)
 })
+
+document.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" && currentSearchResult && document.activeElement === search) {
+        openChapter(currentSearchResult);
+    }
+});
 
 //? book loader
 
-const booksContainer = document.querySelector(".books");
+const booksContainer = document.querySelector(".subContainers");
 const chapterList = document.querySelector(".chapterLists");
 const chapterListContainer = document.querySelector(".chapterListsContainer");
+const closeBtn = document.querySelector(".closeBtn");
 
 Object.values(books).forEach((ch) => {
     let div = document.createElement("div");
-    div.classList.add("book");
-    div.setAttribute("subject", ch.name)
-    div.innerHTML = `
-            <div class="cover">${ch.name[0]}</div>
-                <div class="info">
-                    <p class="bookName">${ch.name}</p>
-                    <p class="bookChapters">${ch.chapter.length} chapters</p>
-                </div>
-            </div>
-    `;
+    div.innerHTML=`
+        <div class="subjectCard ${ch.name.split(" ")[0]}">${ch.name}</div>
+    `
 
     booksContainer.appendChild(div)
 
     div.addEventListener("click", () => {
-        document.querySelector(".headder > h3").innerHTML = `${ch.name}`
+        const subjectName  = document.querySelector(".subjectName");
+        subjectName.innerHTML = `${ch.name}`
         chapterListContainer.innerHTML = "";
+        chapterList.classList.remove("maths")
+        chapterList.classList.remove("science")
+        chapterList.classList.remove("social")
+        chapterList.classList.remove("english")
+        chapterList.classList.add(ch.name.split(" ")[0])
         ch.chapter.forEach((c) => {
             let chap = document.createElement("div");
             chap.classList.add("chapter")
@@ -315,18 +378,26 @@ Object.values(books).forEach((ch) => {
                 <p>${c.name}</p>
             `
             chapterListContainer.appendChild(chap);
+
+
             chap.addEventListener("click", () => {
-                console.log(c, c.file)
-                openChapter(c)
+                openChapter(c , ch.name)
             })
         })
-        chapterList.style.top = "50%"
+        chapterList.style.display = "flex"
+        setTimeout(() => {
+            chapterList.style.top = "50%"
+        },200)
     })
 })
 
-document.querySelector(".closeList").addEventListener("click", () => {
+closeBtn.addEventListener("click" , () => {
     chapterList.style.top = "150%";
+    setTimeout(() => {
+        chapterList.style.display = "none";
+    },200)
 })
+
 
 //? time
 
@@ -366,7 +437,7 @@ const noTime = () => {
     time.style.top = "1000%"
 }
 
-const TIME_LIMIT = 10; //seconds
+const TIME_LIMIT = 20; //seconds
 let count = 0;
 let triggered = false;
 
@@ -374,7 +445,6 @@ setInterval(() => {
     if (count < TIME_LIMIT) {
         count++;
         noTime()
-        console.log(count)
     } else if (!triggered) {
         bringTime()
         triggered = true;
@@ -392,3 +462,4 @@ document.addEventListener("keypress", () => {
     triggered = false;
     noTime()
 })
+

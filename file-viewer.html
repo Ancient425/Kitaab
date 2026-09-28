@@ -362,7 +362,7 @@
 
   <div class="fileDiv" id="fileDiv" style="position: relative;">
     <div id="fileInputContainer" style="display:flex;justify-content:center;align-items:center;height:100%;">
-      <input type="file" id="fileInput" accept=".pdf,image/*" style="display:none;">
+      <input type="file" id="fileInput" style="display:none;">
       <label for="fileInput" id="fileInputLabel" style="
         background:#21808d;
         color:white;
@@ -372,7 +372,7 @@
         font-size:16px;
         font-family:'Inter',sans-serif;
         transition:all 0.3s ease;">
-        Select PDF, Image, or GIF
+        Select a file
       </label>
     </div>
 
@@ -687,31 +687,28 @@
     let zoomLevel = 1;
     let currentImg = null;
 
-    fileInput.addEventListener("change", (e) => {
-      const file = e.target.files[0];
-      if (!file) return;
-      const fileURL = URL.createObjectURL(file);
-      const ext = file.name.split('.').pop().toLowerCase();
-
+    function displayFile(fileURL, fileName, fileType = "") {
+      const ext = fileName.split('.').pop().toLowerCase();
+      const isImage = fileType.startsWith("image/") || ["png", "jpg", "jpeg", "gif", "bmp", "webp"].includes(ext);
       let content = "";
 
-      if (["png", "jpg", "jpeg", "gif", "bmp", "webp"].includes(ext)) {
+      if (isImage) {
         content = `
           <div id="imgContainer" style="width:100%;height:100%;overflow:auto;position:relative;">
             <img id="displayedImg" src="${fileURL}" 
               style="display:block;margin:auto;max-width:100%;max-height:100%;transform-origin:center center;">
           </div>`;
         imgRibbon.style.display = "flex";
-      } else if (ext === "pdf") {
+      } else if (fileType === "application/pdf" || ext === "pdf") {
         content = `<iframe src="${fileURL}" style="width:100%;height:100%;border:none;"></iframe>`;
         imgRibbon.style.display = "none";
       } else {
-        content = `<p style="font-family:sans-serif;color:#444;text-align:center;">Unsupported file type: ${ext}</p>`;
+        content = `<iframe src="${fileURL}" title="File preview" style="width:100%;height:100%;border:none;"></iframe>`;
         imgRibbon.style.display = "none";
       }
 
       fileDiv.innerHTML = content;
-      if (["png", "jpg", "jpeg", "gif", "bmp", "webp"].includes(ext)) {
+      if (isImage) {
         fileDiv.appendChild(imgRibbon); // keep ribbon on top
         currentImg = fileDiv.querySelector("#displayedImg");
         zoomLevel = 1;
@@ -719,7 +716,22 @@
       }
 
       updateSplit(divider.value);
+    }
+
+    fileInput.addEventListener("change", (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      displayFile(URL.createObjectURL(file), file.name, file.type);
     });
+
+    window.addEventListener("message", (event) => {
+      if (event.source !== window.opener || event.data?.type !== "open-dropped-file") return;
+      const file = event.data.file;
+      if (!(file instanceof File)) return;
+      displayFile(URL.createObjectURL(file), file.name, file.type);
+    });
+
+    if (window.opener) window.opener.postMessage({ type: "file-viewer-ready" }, "*");
 
     // === Zoom Buttons ===
     document.getElementById("zoomInBtn").addEventListener("click", () => {

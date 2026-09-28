@@ -31,62 +31,69 @@
     </div>
     <div class="ball ball1"></div>
     <div class="ball ball2"></div>
+
     <section class="nav">
-        <nav>
-            <header>
-                <img src="./media/logo.svg">
-                <h2>Kitaab</h2>
-            </header>
+        <header>
+            <h1>Kitaab</h1>
+            <h6>v6p1</h6>
+        </header>
+        <nav class="linkContainer">
             <ul>
-                <li><a href="#"><img src="./media/home.svg" />Home</a></li>
-                <li><a href="#"><img src="./media/recents.svg" />Recents</a></li>
-                <li><a href="./notebook/notebook.html"><img src="./media/notebook.svg" />Uploads</a></li>
+                <li class="chapterslink active"><a href="#chapters">Chapters</a></li>
+                <li class="recentslink"><a href="#recents">Recents</a></li>
+                <li><a href="./file-viewer.html" target="_blank">Whiteboard <img src="./media/box-arrow-up-right.svg"></a></li>
             </ul>
-            <div class="settings">
-                <b><label for="toggleDarkMode">Darkmode </label></b>
-                <label class="switch">
-                    <input type="checkbox" id="toggleDarkMode">
-                    <span class="slider round"></span>
-                </label>
-            </div>
         </nav>
     </section>
-    <!-- buffer -->
-    <div class="chapterLists">
-        <div class="headder">
-            <h3>Subject </h3>
-            <button class="closeList">close</button>
-        </div>
-        <div class="chapterListsContainer">
-
-        </div>
-    </div>
     <section class="main">
-        <div class="subjects">
-            <h3>Subjects </h3>
-            <div class="books">
-                <!--  -->
+        <div class="chapters" id="chapters">
+            <div class="subjects">
+                <h2>Subjects</h2>
+                <div class="subContainers"></div>
             </div>
-            <div class="credits">
-                <p>Made By Abhinav & Tanmay</p>
-                <p>v5p6.7</p>
+            <div class="recentsContainer">
+                <h2>Continue From Where You Left </h2>
+                <div class="recentListContainer">
+
+                </div>
+            </div>
+            <div class="drag_and_drop">
+                <div class="dropContainer" dropzone="link">
+                    <h2>Drag and Drop</h2>
+                    <p>to open pdfs and images in whiteboard</p>
+                </div>
+            </div>
+            <div class="search">
+                <button class="searchBtn">Search <img src="./media/search.svg"></button>
+            </div>
+            <div class="tools">
+                <a href="./graph.html" target="_blank"><button class="tool graph"><img src="./media/graph-up (1).svg"></button></a>
+                <a href="./whiteboard.html" target="_blank"><button class="tool whiteboard"><img src="./media/pencil-square (1).svg" alt=""></button></a>
+                <a href="./help.html" target="_blank"><button class="tool help"><img src="./media/info-circle.svg" alt=""></button></a>
+            </div>
+            <div class="chapterLists">
+                <header>
+                    <h2 class="subjectName"></h2>
+                    <button class="closeBtn"><img src="./media/x-lg.svg"></button>
+                </header>
+                <div class="chapterListsContainer">
+
+                </div>
+            </div>
+            <div class="searchContainer">
+                <div class="searchInnerContainer">
+                    <div class="suggestionContainer">
+                        <div class="suggestionInnerContainer">
+                            
+                        </div>
+                    </div>
+                    <input type="text" class="searchbar" placeholder="Search for chapters">
+                </div>
             </div>
         </div>
-        <div class="branding">
-            <img src="./media/logo.svg">
-            <h1>Kitaab</h1>
-        </div>
-        <div class="buttons">
-            <a href="./whiteboard.html" target="_blank"><button>Only Whiteboard</button></a>
-            <a href="./file-viewer.html" target="_blank"><button>File Viewer</button></a>
-        </div>
-        <div class="suggestionContainer">
-            <div class="suggestionInnerContainer"></div>
-        </div>
-        <div class="searchContainer">
-            <input class="inputSearch" type="text" placeholder="Search chapters ...    or use help() to get help">
-        </div>
+        <div class="recents" id="recents"></div>
     </section>
     <script src="./index.js"></script>
 </body>
+
 </html>
